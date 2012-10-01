@@ -64,7 +64,7 @@ class Est_Handler_MarkerReplace extends Est_Handler_Abstract {
 
 		$this->addMessage(new Est_Message(
 			sprintf('Replaced %s occurence(s) of marker "%s" in file "%s" with value "%s"', $count, $marker, $file, $this->value),
-			Est_Message::INFO
+			Est_Message::OK
 		));
 
 		return true;
