@@ -2,17 +2,10 @@
 
 class Est_Message {
 
-	/**
-	 * Levels are taken from Zend_Log
-	 */
-	const EMERG   = 0;  // Emergency: system is unusable
-	const ALERT   = 1;  // Alert: action must be taken immediately
-	const CRIT    = 2;  // Critical: critical conditions
-	const ERR     = 3;  // Error: error conditions
-	const WARN    = 4;  // Warning: warning conditions
-	const NOTICE  = 5;  // Notice: normal but significant condition
-	const INFO    = 6;  // Informational: informational messages
-	const DEBUG   = 7;  // Debug: debug messages
+	const OK = 0;
+	const WARNING = 1;
+	const ERROR = 2;
+	const SKIPPED = 3;
 
 	/**
 	 * @var string
@@ -30,13 +23,47 @@ class Est_Message {
 	 * @param string $text
 	 * @param int $level
 	 */
-	public function __construct($text, $level=Est_Message::INFO) {
+	public function __construct($text, $level=Est_Message::OK) {
 		$this->text = $text;
 		$this->level = $level;
 	}
 
+	/**
+	 * Get text
+	 *
+	 * @return string
+	 */
 	public function getText() {
 		return $this->text;
+	}
+
+	/**
+	 * Get level
+	 * see class constants
+	 *
+	 * @return int
+	 */
+	public function getLevel() {
+		return $this->level;
+	}
+
+	/**
+	 * Get colored text message
+	 *
+	 * @return string
+	 * @throws Exception
+	 */
+	public function getColoredText() {
+
+		switch ($this->getLevel()) {
+			case Est_Message::OK: $color = 'green'; break;
+			case Est_Message::WARNING: $color = 'orange'; break;
+			case Est_Message::SKIPPED: $color = 'blue'; break;
+			case Est_Message::ERROR: $color = 'red'; break;
+			default: throw new Exception('Invalid level');
+		}
+
+		return Est_CliOutput::getColoredString($this->getText(), $color);
 	}
 
 }

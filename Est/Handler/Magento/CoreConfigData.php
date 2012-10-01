@@ -24,27 +24,55 @@ class Est_Handler_Magento_CoreConfigData extends Est_Handler_AbstractDatabase {
 		if (empty($scope)) {
 			throw new Exception("No scope found (param1)");
 		}
-		if (empty($scopeId)) {
+		if (is_null($scopeId)) {
 			throw new Exception("No scopeId found (param2)");
 		}
 		if (empty($path)) {
 			throw new Exception("No path found (param2)");
 		}
 
-		$conn = $this->getDbConnection();
-		$currentValue = $conn->query(sprintf('
-			SELECT value
-			FROM core_config_data
-			WHERE
-				scope LIKE "%s"
-				AND scope_id LIKE "%s"
-				AND path LIKE "%s"',
-			$conn->quote($scope),
-			$conn->quote($scopeId),
-			$conn->quote($path)
-		))->fetch();
+		$sqlParameters = array(
+			':scope' => $scope,
+			':scopeId' => $scopeId,
+			':path' => $path
+		 );
 
-		var_dump($currentValue);
+		$conn = $this->getDbConnection();
+		$query = $conn->prepare('SELECT `value` FROM `core_config_data` WHERE `scope` LIKE :scope AND `scope_id` LIKE :scopeId AND `path` LIKE :path');
+		$query->execute($sqlParameters);
+
+		$query->setFetchMode(PDO::FETCH_ASSOC);
+		$currentValue = $query->fetch();
+
+		$sqlParameters[':value'] = $this->value;
+
+		if ($currentValue === false) {
+			// value doesn't exist: insert instead of update
+
+			$res = $conn->prepare('INSERT INTO `core_config_data` (`scope`, `scope_id`, `path`, value) VALUES (:scope, :scopeId, :path, :value)')
+				->execute($sqlParameters);
+
+			if ($res === false) {
+				// TODO: include speaking error message
+				throw new Exception('Error while updating value');
+			}
+
+			$this->addMessage(new Est_Message(sprintf('Inserted new value "%s"', $this->value)));
+
+		} elseif($currentValue['value'] == $this->value) {
+			$this->addMessage(new Est_Message(sprintf('Value "%s" is already in place. Skipping.', $currentValue['value']), Est_Message::SKIPPED));
+		} else {
+
+			$res = $conn->prepare('UPDATE `core_config_data` SET `value` = :value WHERE `scope` LIKE :scope AND `scope_id` LIKE :scopeId AND `path` LIKE :path')
+				->execute($sqlParameters);
+
+			if ($res === false) {
+				// TODO: include speaking error message
+				throw new Exception('Error while updating value');
+			}
+
+			$this->addMessage(new Est_Message(sprintf('Updated value from "%s" to "%s"', $currentValue['value'], $this->value)));
+		}
 
 	}
 

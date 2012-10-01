@@ -40,7 +40,7 @@ abstract class Est_Handler_Abstract {
 		} catch (Exception $e) {
 			$this->addMessage(new Est_Message(
 				$e->getMessage(),
-				Est_Message::ERR
+				Est_Message::ERROR
 			));
 			return false;
 		}
@@ -92,11 +92,11 @@ abstract class Est_Handler_Abstract {
 	public function getLabel() {
 		$label = get_class($this);
 		$label .= '(';
-		$label .= $this->param1 ? $this->param1 : 'null';
+		$label .= is_null($this->param1) ? 'null' : $this->param1;
 		$label .= ', ';
-		$label .= $this->param2 ? $this->param2 : 'null';
+		$label .= is_null($this->param2) ? 'null' : $this->param2;
 		$label .= ', ';
-		$label .= $this->param3 ? $this->param3 : 'null';
+		$label .= is_null($this->param3) ? 'null' : $this->param3;
 		$label .= ')';
 		$label .= ' = ';
 		$label .= $this->value;
