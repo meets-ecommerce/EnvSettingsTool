@@ -48,20 +48,23 @@ class Est_Handler_MarkerReplace extends Est_Handler_Abstract {
 		// do the replacement
 		$fileContent = str_replace($marker, $this->value, $fileContent, $count);
 
-		if ($count == 0) {
-			throw new Exception(sprintf('Could not find marker "%s" in file "%s"', $marker, $file));
-		}
+		if ($count > 0) {
+			// write back to file
+			$res = file_put_contents($file, $fileContent);
+			if ($res === false) {
+				throw new Exception(sprintf('Error while writing file "%s"', $file));
+			}
 
-		// write back to file
-		$res = file_put_contents($file, $fileContent);
-		if ($res === false) {
-			throw new Exception(sprintf('Error while writing file "%s"', $file));
+			$this->addMessage(new Est_Message(
+				sprintf('Replaced %s occurence(s) of marker "%s" in file "%s" with value "%s"', $count, $marker, $file, $this->value),
+				Est_Message::OK
+			));
+		} else {
+			$this->addMessage(new Est_Message(
+				sprintf('Could not find marker "%s" in file "%s"', $marker, $file),
+				Est_Message::WARNING
+			));
 		}
-
-		$this->addMessage(new Est_Message(
-			sprintf('Replaced %s occurence(s) of marker "%s" in file "%s" with value "%s"', $count, $marker, $file, $this->value),
-			Est_Message::OK
-		));
 
 		return true;
 	}

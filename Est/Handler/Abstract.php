@@ -91,16 +91,21 @@ abstract class Est_Handler_Abstract {
 	 */
 	public function getLabel() {
 		$label = get_class($this);
-		$label .= '(';
-		$label .= is_null($this->param1) ? 'null' : $this->param1;
-		$label .= ', ';
-		$label .= is_null($this->param2) ? 'null' : $this->param2;
-		$label .= ', ';
-		$label .= is_null($this->param3) ? 'null' : $this->param3;
-		$label .= ')';
+		$label .= sprintf("('%s', '%s', '%s')",
+			$this->formatParam($this->param1),
+			$this->formatParam($this->param2),
+			$this->formatParam($this->param3)
+		);
 		$label .= ' = ';
 		$label .= $this->value;
 		return $label;
+	}
+
+	public function formatParam($param) {
+		if (is_null($param)) {
+			$param = 'null';
+		}
+		return $param;
 	}
 
 

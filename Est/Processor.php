@@ -42,15 +42,21 @@ class Est_Processor {
 	/**
 	 * Apply settings to current environment
 	 *
-	 * @return void
+	 * @return bool
 	 */
 	public function apply() {
 
 		$this->parseCsv();
 
 		foreach ($this->handlers as $handler) { /* @var $handler Est_Handler_Abstract */
-			$handler->apply();
+			$res = $handler->apply();
+			if (!$res) {
+				// An error has occured in one of the handlers. Stop here.
+				return false;
+			}
 		}
+
+		return true;
 	}
 
 	/**
@@ -112,8 +118,9 @@ class Est_Processor {
 	public function printResults() {
 		foreach ($this->handlers as $handler) { /* @var $handler Est_Handler_Abstract */
 			$this->output();
-			$this->output($handler->getLabel());
-			$this->output(str_repeat('-', 80));
+			$label = $handler->getLabel();
+			$this->output($label);
+			$this->output(str_repeat('-', strlen($label)));
 			foreach ($handler->getMessages() as $message) { /* @var $message Est_Message */
 				$this->output($message->getColoredText());
 			}

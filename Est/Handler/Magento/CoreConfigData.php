@@ -74,6 +74,7 @@ class Est_Handler_Magento_CoreConfigData extends Est_Handler_AbstractDatabase {
 			$this->addMessage(new Est_Message(sprintf('Updated value from "%s" to "%s"', $currentValue['value'], $this->value)));
 		}
 
+		return true;
 	}
 
 	/**

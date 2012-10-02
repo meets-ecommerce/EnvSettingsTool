@@ -46,8 +46,13 @@ try {
 	$settingsFile = $_SERVER['argv'][2];
 
 	$processor = new Est_Processor($env, $settingsFile);
-	$processor->apply();
+	$res = $processor->apply();
 	$processor->printResults();
+
+	if (!$res) {
+		echo "\nERROR: Stopping execution because an error has occured!\n\n";
+		exit(1);
+	}
 } catch (Exception $e) {
 	echo "\nERROR: {$e->getMessage()}\n\n";
 	exit(1);

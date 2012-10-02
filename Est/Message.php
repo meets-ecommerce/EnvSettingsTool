@@ -57,7 +57,7 @@ class Est_Message {
 
 		switch ($this->getLevel()) {
 			case Est_Message::OK: $color = 'green'; break;
-			case Est_Message::WARNING: $color = 'orange'; break;
+			case Est_Message::WARNING: $color = 'light_red'; break;
 			case Est_Message::SKIPPED: $color = 'blue'; break;
 			case Est_Message::ERROR: $color = 'red'; break;
 			default: throw new Exception('Invalid level');
