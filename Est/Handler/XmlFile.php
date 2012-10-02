@@ -31,7 +31,7 @@ class Est_Handler_XmlFile extends Est_Handler_Abstract {
 		if (!is_writable($file)) {
 			throw new Exception(sprintf('File "%s" is not writeable', $file));
 		}
-		if (empty($marker)) {
+		if (empty($expression)) {
 			throw new Exception('No xpath defined');
 		}
 		if (!empty($this->param3)) {
