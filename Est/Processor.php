@@ -77,7 +77,12 @@ class Est_Processor {
 		}
 
 		while ($row = fgetcsv($fh)) {
-			$handlerClassname = $row[0];
+			$handlerClassname = trim($row[0]);
+
+			if (empty($handlerClassname) || $handlerClassname[0] == '#' || $handlerClassname[0] == '/') {
+				// This is a comment line. Skipping...
+				continue;
+			}
 
 			if (!class_exists($handlerClassname)) {
 				throw new Exception(sprintf('Could not find handler class "%s"', $handlerClassname));
