@@ -16,10 +16,6 @@ class Est_Handler_MarkerReplace extends Est_Handler_Abstract {
 	/**
 	 * Apply
 	 *
-	 * @param $value
-	 * @param null $param1
-	 * @param null $param2
-	 * @param null $param3
 	 * @throws Exception
 	 * @return bool
 	 */
