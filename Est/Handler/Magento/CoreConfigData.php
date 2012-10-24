@@ -38,40 +38,66 @@ class Est_Handler_Magento_CoreConfigData extends Est_Handler_AbstractDatabase {
 		 );
 
 		$conn = $this->getDbConnection();
-		$query = $conn->prepare('SELECT `value` FROM `core_config_data` WHERE `scope` LIKE :scope AND `scope_id` LIKE :scopeId AND `path` LIKE :path');
-		$query->execute($sqlParameters);
 
-		$query->setFetchMode(PDO::FETCH_ASSOC);
-		$currentValue = $query->fetch();
-
-		$sqlParameters[':value'] = $this->value;
-
-		if ($currentValue === false) {
-			// value doesn't exist: insert instead of update
-
-			$res = $conn->prepare('INSERT INTO `core_config_data` (`scope`, `scope_id`, `path`, value) VALUES (:scope, :scopeId, :path, :value)')
-				->execute($sqlParameters);
+		if ($this->value == '--delete--') {
+			$query = $conn->prepare('DELETE FROM `core_config_data` WHERE `scope` LIKE :scope AND `scope_id` LIKE :scopeId AND `path` LIKE :path');
+			$res = $query->execute($sqlParameters);
 
 			if ($res === false) {
-				// TODO: include speaking error message
-				throw new Exception('Error while updating value');
+				throw new Exception('Error while deleting rows');
 			}
 
-			$this->addMessage(new Est_Message(sprintf('Inserted new value "%s"', $this->value)));
+			$rowCount = $query->rowCount();
 
-		} elseif($currentValue['value'] == $this->value) {
-			$this->addMessage(new Est_Message(sprintf('Value "%s" is already in place. Skipping.', $currentValue['value']), Est_Message::SKIPPED));
+			if ($rowCount > 0) {
+				$this->addMessage(new Est_Message(sprintf('Deleted "%s" row(s)', $rowCount)));
+			} else {
+				$this->addMessage(new Est_Message('No rows deleted.', Est_Message::SKIPPED));
+			}
+
 		} else {
 
-			$res = $conn->prepare('UPDATE `core_config_data` SET `value` = :value WHERE `scope` LIKE :scope AND `scope_id` LIKE :scopeId AND `path` LIKE :path')
-				->execute($sqlParameters);
+			$query = $conn->prepare('SELECT `value` FROM `core_config_data` WHERE `scope` LIKE :scope AND `scope_id` LIKE :scopeId AND `path` LIKE :path');
+			$query->execute($sqlParameters);
 
-			if ($res === false) {
-				// TODO: include speaking error message
-				throw new Exception('Error while updating value');
+			$query->setFetchMode(PDO::FETCH_ASSOC);
+			$currentValue = $query->fetch();
+
+			$containsPlaceholder = $this->containsPlaceholder($sqlParameters);
+
+			$sqlParameters[':value'] = $this->value;
+
+			if ($currentValue === false && $containsPlaceholder) {
+
+				$this->addMessage(new Est_Message('Trying to update using placeholders where no rows existed', Est_Message::SKIPPED));
+
+			} elseif ($currentValue === false) {
+				// value doesn't exist: insert instead of update
+
+				$res = $conn->prepare('INSERT INTO `core_config_data` (`scope`, `scope_id`, `path`, value) VALUES (:scope, :scopeId, :path, :value)')
+					->execute($sqlParameters);
+
+				if ($res === false) {
+					// TODO: include speaking error message
+					throw new Exception('Error while updating value');
+				}
+
+				$this->addMessage(new Est_Message(sprintf('Inserted new value "%s"', $this->value)));
+
+			} elseif($currentValue['value'] == $this->value) {
+				$this->addMessage(new Est_Message(sprintf('Value "%s" is already in place. Skipping.', $currentValue['value']), Est_Message::SKIPPED));
+			} else {
+
+				$res = $conn->prepare('UPDATE `core_config_data` SET `value` = :value WHERE `scope` LIKE :scope AND `scope_id` LIKE :scopeId AND `path` LIKE :path')
+					->execute($sqlParameters);
+
+				if ($res === false) {
+					// TODO: include speaking error message
+					throw new Exception('Error while updating value');
+				}
+
+				$this->addMessage(new Est_Message(sprintf('Updated value from "%s" to "%s"', $currentValue['value'], $this->value)));
 			}
-
-			$this->addMessage(new Est_Message(sprintf('Updated value from "%s" to "%s"', $currentValue['value'], $this->value)));
 		}
 
 		return true;
@@ -101,6 +127,21 @@ class Est_Handler_Magento_CoreConfigData extends Est_Handler_AbstractDatabase {
 			'username' => (string)$config->global->resources->default_setup->connection->username,
 			'password' => (string)$config->global->resources->default_setup->connection->password
 		);
+	}
+
+	/**
+	 * Check if at least one of the paramters contains a wildcard
+	 *
+	 * @param array $parameters
+	 * @return bool
+	 */
+	protected function containsPlaceholder(array $parameters) {
+		foreach ($parameters as $value) {
+			if (strpos($value, '%') !== false) {
+				return true;
+			}
+		}
+		return false;
 	}
 
 
