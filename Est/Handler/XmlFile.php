@@ -66,8 +66,8 @@ class Est_Handler_XmlFile extends Est_Handler_Abstract {
 			if ($element->nodeValue == $this->value) {
 				$this->addMessage(new Est_Message(sprintf('Value "%s" is already in place. Skipping.', $this->value), Est_Message::SKIPPED));
 			} else {
-				$element->nodeValue = $this->value;
 				$this->addMessage(new Est_Message(sprintf('Updated value from "%s" to "%s"', $element->nodeValue, $this->value)));
+				$element->nodeValue = $this->value;
 				$changes++;
 			}
 		}
