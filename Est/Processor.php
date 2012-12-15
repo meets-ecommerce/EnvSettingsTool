@@ -116,15 +116,34 @@ class Est_Processor {
 	 * Print result
 	 */
 	public function printResults() {
+		$statistics = array();
 		foreach ($this->handlers as $handler) { /* @var $handler Est_Handler_Abstract */
+			// Collecting some statistics
+			$statistics[$handler->getStatus()][] = $handler;
+
+			// skipping handlers that weren't executed
+			if ($handler->getStatus() == Est_Handler_Abstract::STATUS_NOTEXECUTED) {
+				continue;
+			}
+
 			$this->output();
 			$label = $handler->getLabel();
 			$this->output($label);
 			$this->output(str_repeat('-', strlen($label)));
+
 			foreach ($handler->getMessages() as $message) { /* @var $message Est_Message */
 				$this->output($message->getColoredText());
 			}
 		}
+
+		$this->output();
+		$this->output('Status summary:');
+		$this->output(str_repeat('=', strlen(('Status summary:'))));
+
+		foreach ($statistics as $status => $handlers) {
+			$this->output(sprintf("%s: %s handler(s)", $status, count($handlers)));
+		}
+
 	}
 
 	protected function output($message='', $newLine=true) {

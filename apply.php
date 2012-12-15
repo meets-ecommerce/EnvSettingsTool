@@ -38,12 +38,12 @@ spl_autoload_register(function ($className) {
 
 try {
 
-	if (empty($_SERVER['argv'][1]) || empty($_SERVER['argv'][2])) {
-		throw new Exception('Please specify the environment and the path to the settings file.');
+	if (empty($_SERVER['argv'][1])) {
+		throw new Exception('Please specify the environment');
 	}
 
 	$env = $_SERVER['argv'][1];
-	$settingsFile = $_SERVER['argv'][2];
+	$settingsFile = empty($_SERVER['argv'][2]) ? '../settings/settings.csv' : $_SERVER['argv'][2];
 
 	$processor = new Est_Processor($env, $settingsFile);
 	$res = $processor->apply();

@@ -57,7 +57,7 @@ class Est_Handler_XmlFile extends Est_Handler_Abstract {
 			throw new Exception(sprintf('Error while reading elements by xpath "%s"', $expression));
 		}
 
-		if (!count($elements)) {
+		if ($elements->length == 0) {
 			throw new Exception(sprintf('Xpath "%s" does not match any elements', $expression));
 		}
 

@@ -8,6 +8,10 @@
  */
 abstract class Est_Handler_Abstract {
 
+	CONST STATUS_NOTEXECUTED = 'NOT_EXECUTED';
+	CONST STATUS_RUNNING = 'RUNNING';
+	CONST STATUS_FINISHED = 'FINISHED'; // we don't have any detailed information besides that it finished without exeptions here
+
 	/**
 	 * @var array
 	 */
@@ -19,6 +23,8 @@ abstract class Est_Handler_Abstract {
 	protected $value;
 
 	protected $environment;
+
+	protected $status = Est_Handler_Abstract::STATUS_NOTEXECUTED;
 
 
 	/**
@@ -36,7 +42,12 @@ abstract class Est_Handler_Abstract {
 	 */
 	public function apply() {
 		try {
-			return $this->_apply();
+			$this->setStatus(Est_Handler_Abstract::STATUS_RUNNING);
+			$result = $this->_apply();
+			if ($this->getStatus() == Est_Handler_Abstract::STATUS_RUNNING) {
+				$this->setStatus(Est_Handler_Abstract::STATUS_FINISHED);
+			}
+			return $result;
 		} catch (Exception $e) {
 			$this->addMessage(new Est_Message(
 				$e->getMessage(),
@@ -106,6 +117,14 @@ abstract class Est_Handler_Abstract {
 			$param = 'null';
 		}
 		return $param;
+	}
+
+	protected function setStatus($status) {
+		$this->status = $status;
+	}
+
+	public function getStatus() {
+		return $this->status;
 	}
 
 
