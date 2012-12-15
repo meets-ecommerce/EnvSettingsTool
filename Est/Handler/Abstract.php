@@ -11,6 +11,11 @@ abstract class Est_Handler_Abstract {
 	CONST STATUS_NOTEXECUTED = 'NOT_EXECUTED';
 	CONST STATUS_RUNNING = 'RUNNING';
 	CONST STATUS_FINISHED = 'FINISHED'; // we don't have any detailed information besides that it finished without exeptions here
+	CONST STATUS_SKIPPED = 'SKIPPED';
+	CONST STATUS_ALREADYINPLACE = 'ALREADY IN PLACE';
+	CONST STATUS_SUBJECTNOTFOUND = 'SUBJECT_NOT_FOUND';
+	CONST STATUS_DONE = 'DONE';
+	CONST STATUS_ERROR = 'ERROR';
 
 	/**
 	 * @var array
@@ -49,6 +54,7 @@ abstract class Est_Handler_Abstract {
 			}
 			return $result;
 		} catch (Exception $e) {
+			$this->setStatus(Est_Handler_Abstract::STATUS_ERROR);
 			$this->addMessage(new Est_Message(
 				$e->getMessage(),
 				Est_Message::ERROR

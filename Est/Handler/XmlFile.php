@@ -58,6 +58,7 @@ class Est_Handler_XmlFile extends Est_Handler_Abstract {
 		}
 
 		if ($elements->length == 0) {
+			$this->setStatus(Est_Handler_Abstract::STATUS_SUBJECTNOTFOUND);
 			throw new Exception(sprintf('Xpath "%s" does not match any elements', $expression));
 		}
 
@@ -84,6 +85,9 @@ class Est_Handler_XmlFile extends Est_Handler_Abstract {
 			if ($res === false) {
 				throw new Exception(sprintf('Error while writing file "%s"', $file));
 			}
+			$this->setStatus(Est_Handler_Abstract::STATUS_DONE);
+		} else {
+			$this->setStatus(Est_Handler_Abstract::STATUS_ALREADYINPLACE);
 		}
 
 		return true;
