@@ -42,6 +42,10 @@ try {
 		throw new Exception('Please specify the environment');
 	}
 
+	if ($_ENV['NO_COLOR']) {
+		Est_CliOutput::$active = false;
+	}
+
 	$env = $_SERVER['argv'][1];
 	$settingsFile = empty($_SERVER['argv'][2]) ? '../settings/settings.csv' : $_SERVER['argv'][2];
 
