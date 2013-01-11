@@ -42,7 +42,7 @@ try {
 		throw new Exception('Please specify the environment');
 	}
 
-	if ($_ENV['NO_COLOR']) {
+	if (!empty($_ENV['NO_COLOR'])) {
 		Est_CliOutput::$active = false;
 	}
 
