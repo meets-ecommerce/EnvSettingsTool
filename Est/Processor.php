@@ -18,6 +18,11 @@ class Est_Processor {
 	protected $handlers = array();
 
 	/**
+	 * @var array
+	 */
+	protected $paramIndex = array();
+
+	/**
 	 * Constructor
 	 *
 	 * @param $environment
@@ -107,9 +112,46 @@ class Est_Processor {
 			// set value
 			$handler->setValue($row[$columnIndex]);
 
+			if (!isset($this->paramIndex[$handlerClassname])) {
+				$this->paramIndex[$handlerClassname] = array();
+			}
+
+			if (!isset($this->paramIndex[$handlerClassname][$row[1]])) {
+				$this->paramIndex[$handlerClassname][$row[1]] = array();
+			}
+			if (!isset($this->paramIndex[$handlerClassname][$row[1]][$row[2]])) {
+				$this->paramIndex[$handlerClassname][$row[1]][$row[2]] = array();
+			}
+			if (isset($this->paramIndex[$handlerClassname][$row[1]][$row[2]][$row[3]])) {
+				throw new Exception('This param combination was used before!');
+			}
+			$this->paramIndex[$handlerClassname][$row[1]][$row[2]][$row[3]] = $handler;
+
 			$this->handlers[] = $handler;
 		}
 
+	}
+
+	/**
+	 * Get value
+	 *
+	 * @param $handler
+	 * @param $param1
+	 * @param $param2
+	 * @param $param3
+	 * @throws Exception
+	 * @return Est_Handler_Abstract
+	 */
+	public function getHandler($handler, $param1, $param2, $param3) {
+		$this->parseCsv();
+
+		if (!isset($this->paramIndex[$handler])
+			|| !isset($this->paramIndex[$handler][$param1])
+			|| !isset($this->paramIndex[$handler][$param1][$param2])
+			|| !isset($this->paramIndex[$handler][$param1][$param2][$param3])) {
+			throw new Exception('Parameter combination not found!');
+		}
+		return $this->paramIndex[$handler][$param1][$param2][$param3];
 	}
 
 	/**

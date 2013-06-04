@@ -83,6 +83,10 @@ abstract class Est_Handler_Abstract {
 		$this->value = $value;
 	}
 
+	public function getValue() {
+		return $this->value;
+	}
+
 	/**
 	 * Add message
 	 *
