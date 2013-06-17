@@ -23,6 +23,8 @@ This is an example CSV file:
 Each row is one setting. An Setting is changed by a "Handler", and each Handler support up to 3 Parameters.
 The next Columns represent the Values for the Environments, and you may use the "DEFAULT" key for a default setting.
 
+The Values also support the special syntax ###ENV:VARIABLE### to read stuff from the (bash) environment Variables.
+
 Usage
 -----------------
 Setup.sh:
@@ -30,6 +32,8 @@ Setup.sh:
 	echo "Apply Settings from ../Setup/Settings.csv for Magento Instance"
 	echo "--------------"
 	cd htdocs
+	# Export some variables that are used in CSV file - e.g. ###ENV:DATABASENAME###
+	export DATABASENAME="mydatabasename"
 	php ../Setup/EnvSettingsTool/apply.php ${ENVIRONMENT} ../Setup/Settings.csv || exit 1
 
 Handlers
