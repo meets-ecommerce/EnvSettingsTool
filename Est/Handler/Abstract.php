@@ -6,16 +6,7 @@
  * @author Fabrizio Branca
  * @since 2012-09-20
  */
-abstract class Est_Handler_Abstract {
-
-	CONST STATUS_NOTEXECUTED = 'NOT_EXECUTED';
-	CONST STATUS_RUNNING = 'RUNNING';
-	CONST STATUS_FINISHED = 'FINISHED'; // we don't have any detailed information besides that it finished without exeptions here
-	CONST STATUS_SKIPPED = 'SKIPPED';
-	CONST STATUS_ALREADYINPLACE = 'ALREADY IN PLACE';
-	CONST STATUS_SUBJECTNOTFOUND = 'SUBJECT_NOT_FOUND';
-	CONST STATUS_DONE = 'DONE';
-	CONST STATUS_ERROR = 'ERROR';
+abstract class Est_Handler_Abstract implements Est_Handler_Interface {
 
 	/**
 	 * @var array
@@ -27,9 +18,9 @@ abstract class Est_Handler_Abstract {
 	protected $param3;
 	protected $value;
 
-	protected $environment;
 
-	protected $status = Est_Handler_Abstract::STATUS_NOTEXECUTED;
+
+	protected $status = Est_Handler_Interface::STATUS_NOTEXECUTED;
 
 
 	/**
@@ -47,24 +38,20 @@ abstract class Est_Handler_Abstract {
 	 */
 	public function apply() {
 		try {
-			$this->setStatus(Est_Handler_Abstract::STATUS_RUNNING);
+			$this->setStatus(Est_Handler_Interface::STATUS_RUNNING);
 			$result = $this->_apply();
-			if ($this->getStatus() == Est_Handler_Abstract::STATUS_RUNNING) {
-				$this->setStatus(Est_Handler_Abstract::STATUS_FINISHED);
+			if ($this->getStatus() == Est_Handler_Interface::STATUS_RUNNING) {
+				$this->setStatus(Est_Handler_Interface::STATUS_FINISHED);
 			}
 			return $result;
 		} catch (Exception $e) {
-			$this->setStatus(Est_Handler_Abstract::STATUS_ERROR);
+			$this->setStatus(Est_Handler_Interface::STATUS_ERROR);
 			$this->addMessage(new Est_Message(
 				$e->getMessage(),
 				Est_Message::ERROR
 			));
 			return false;
 		}
-	}
-
-	public function setEnvironment($environment) {
-		$this->environment = $environment;
 	}
 
 	public function setParam1($param1) {
@@ -77,6 +64,18 @@ abstract class Est_Handler_Abstract {
 
 	public function setParam3($param3) {
 		$this->param3 = $param3;
+	}
+
+	public function getParam1() {
+		return $this->param1;
+	}
+
+	public function getParam2() {
+		return $this->param2;
+	}
+
+	public function getParam3() {
+		return $this->param3;
 	}
 
 	public function setValue($value) {
@@ -122,7 +121,7 @@ abstract class Est_Handler_Abstract {
 		return $label;
 	}
 
-	public function formatParam($param) {
+	protected function formatParam($param) {
 		if (is_null($param)) {
 			$param = 'null';
 		}

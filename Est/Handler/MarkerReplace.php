@@ -59,13 +59,13 @@ class Est_Handler_MarkerReplace extends Est_Handler_Abstract {
 				sprintf('Replaced %s occurence(s) of marker "%s" in file "%s" with value "%s"', $count, $marker, $file, $this->value),
 				Est_Message::OK
 			));
-			$this->setStatus(Est_Handler_Abstract::STATUS_DONE);
+			$this->setStatus(Est_Handler_Interface::STATUS_DONE);
 		} else {
 			$this->addMessage(new Est_Message(
 				sprintf('Could not find marker "%s" in file "%s"', $marker, $file),
 				Est_Message::WARNING
 			));
-			$this->setStatus(Est_Handler_Abstract::STATUS_SUBJECTNOTFOUND);
+			$this->setStatus(Est_Handler_Interface::STATUS_SUBJECTNOTFOUND);
 		}
 
 		return true;

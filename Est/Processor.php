@@ -15,12 +15,8 @@ class Est_Processor {
 	/**
 	 * @var array
 	 */
-	protected $handlers = array();
+	protected $handlerCollection;
 
-	/**
-	 * @var array
-	 */
-	protected $paramIndex = array();
 
 	/**
 	 * Constructor
@@ -42,6 +38,7 @@ class Est_Processor {
 
 		$this->environment = $environment;
 		$this->settingsFilePath = $settingsFilePath;
+		$this->handlerCollection = new Est_HandlerCollection();
 	}
 
 	/**
@@ -51,85 +48,17 @@ class Est_Processor {
 	 */
 	public function apply() {
 
-		$this->parseCsv();
+		$this->handlerCollection->buildFromSettingsCSVFile($this->settingsFilePath,$this->environment);
 
-		foreach ($this->handlers as $handler) { /* @var $handler Est_Handler_Abstract */
+
+		foreach ($this->handlerCollection as $handler) { /* @var $handler Est_Handler_Abstract */
 			$res = $handler->apply();
 			if (!$res) {
-				// An error has occured in one of the handlers. Stop here.
-				return false;
+				throw new Exception('An error in handler'.$handler->getLabel());
 			}
 		}
 
 		return true;
-	}
-
-	/**
-	 * Parse csv file
-	 *
-	 * @throws Exception
-	 */
-	protected function parseCsv() {
-		$fh = fopen($this->settingsFilePath, 'r');
-
-		// first line: labels
-		$labels = fgetcsv($fh);
-		if (!$labels) {
-			throw new Exception('Error while reading labels from csv file');
-		}
-
-		$columnIndex = array_search($this->environment, $labels);
-
-		if ($columnIndex === false) {
-			throw new Exception('Could not find current environment in csv file');
-		}
-		if ($columnIndex <= 3) { // those are reserved for handler class, param1-3
-			throw new Exception('Environment cannot be defined in one of the first four columns');
-		}
-
-		while ($row = fgetcsv($fh)) {
-			$handlerClassname = trim($row[0]);
-
-			if (empty($handlerClassname) || $handlerClassname[0] == '#' || $handlerClassname[0] == '/') {
-				// This is a comment line. Skipping...
-				continue;
-			}
-
-			if (!class_exists($handlerClassname)) {
-				throw new Exception(sprintf('Could not find handler class "%s"', $handlerClassname));
-			}
-			$handler = new $handlerClassname(); /* @var $handler Est_Handler_Abstract */
-			if (!$handler instanceof Est_Handler_Abstract) {
-				throw new Exception(sprintf('Handler of class "%s" is not an instance of Est_Handler_Abstract', $handlerClassname));
-			}
-
-			// set parameters
-			for ($i=1; $i<=3; $i++) {
-				$setterMethod = 'setParam'.$i;
-				$handler->$setterMethod($row[$i]);
-			}
-
-			// set value
-			$handler->setValue($row[$columnIndex]);
-
-			if (!isset($this->paramIndex[$handlerClassname])) {
-				$this->paramIndex[$handlerClassname] = array();
-			}
-
-			if (!isset($this->paramIndex[$handlerClassname][$row[1]])) {
-				$this->paramIndex[$handlerClassname][$row[1]] = array();
-			}
-			if (!isset($this->paramIndex[$handlerClassname][$row[1]][$row[2]])) {
-				$this->paramIndex[$handlerClassname][$row[1]][$row[2]] = array();
-			}
-			if (isset($this->paramIndex[$handlerClassname][$row[1]][$row[2]][$row[3]])) {
-				throw new Exception('This param combination was used before!');
-			}
-			$this->paramIndex[$handlerClassname][$row[1]][$row[2]][$row[3]] = $handler;
-
-			$this->handlers[] = $handler;
-		}
-
 	}
 
 	/**
@@ -143,15 +72,9 @@ class Est_Processor {
 	 * @return Est_Handler_Abstract
 	 */
 	public function getHandler($handler, $param1, $param2, $param3) {
-		$this->parseCsv();
-
-		if (!isset($this->paramIndex[$handler])
-			|| !isset($this->paramIndex[$handler][$param1])
-			|| !isset($this->paramIndex[$handler][$param1][$param2])
-			|| !isset($this->paramIndex[$handler][$param1][$param2][$param3])) {
-			throw new Exception('Parameter combination not found!');
-		}
-		return $this->paramIndex[$handler][$param1][$param2][$param3];
+		$this->handlerCollection->buildFromSettingsCSVFile($this->settingsFilePath,$this->environment);
+		$handler = $this->handlerCollection->getHandler($handler, $param1, $param2, $param3);
+		return $handler;
 	}
 
 	/**
@@ -159,12 +82,12 @@ class Est_Processor {
 	 */
 	public function printResults() {
 		$statistics = array();
-		foreach ($this->handlers as $handler) { /* @var $handler Est_Handler_Abstract */
+		foreach ($this->handlerCollection as $handler) { /* @var $handler Est_Handler_Abstract */
 			// Collecting some statistics
 			$statistics[$handler->getStatus()][] = $handler;
 
 			// skipping handlers that weren't executed
-			if ($handler->getStatus() == Est_Handler_Abstract::STATUS_NOTEXECUTED) {
+			if ($handler->getStatus() == Est_Handler_Interface::STATUS_NOTEXECUTED) {
 				continue;
 			}
 

@@ -7,34 +7,8 @@ if (version_compare(PHP_VERSION, '5.3.0') <= 0) {
 
 define('EST_ROOTDIR', dirname(__FILE__));
 
-/**
-* Simple autoloading
-*
-* @param string $className
-* @return bool
-* @throws Exception
-* @author Fabrizio Branca
-* @since 2012-09-19
-*/
-spl_autoload_register(function ($className) {
 
-	// don't do autoloading for external classes
-	if (strpos($className, 'Est_') !== 0) {
-		return false;
-	}
-
-	$fileName = dirname(__FILE__) . DIRECTORY_SEPARATOR;
-	$fileName .= str_replace('_', DIRECTORY_SEPARATOR, $className) . '.php';
-
-	if (!file_exists($fileName)) {
-		throw new Exception("File '$fileName' not found.");
-	}
-	require_once($fileName);
-	if (!class_exists($className) && !interface_exists($className)) {
-		throw new Exception("File '$fileName' does not contain class/interface '$className'");
-	}
-	return true;
-});
+include(dirname(__FILE__).'/Est/Autoloading.php');
 
 try {
 
@@ -50,13 +24,16 @@ try {
 	$settingsFile = empty($_SERVER['argv'][2]) ? '../settings/settings.csv' : $_SERVER['argv'][2];
 
 	$processor = new Est_Processor($env, $settingsFile);
-	$res = $processor->apply();
-	$processor->printResults();
-
-	if (!$res) {
+	try {
+		$res = $processor->apply();
+		$processor->printResults();
+	}
+	catch (Exception $e) {
+		$processor->printResults();
 		echo "\nERROR: Stopping execution because an error has occured!\n\n";
 		exit(1);
 	}
+
 } catch (Exception $e) {
 	echo "\nERROR: {$e->getMessage()}\n\n";
 	exit(1);

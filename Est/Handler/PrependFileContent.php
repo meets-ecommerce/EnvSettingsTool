@@ -1,7 +1,7 @@
 <?php
 
 /**
- * Replace a value in a xml file by an xpath expression
+ * Add stuff to a file
  *
  * Parameters
  * - param1: targetFile
@@ -26,7 +26,7 @@ class Est_Handler_PrependFileContent extends Est_Handler_Abstract {
 		$targetFile = $this->param1;
 
 		if (empty($this->value)) {
-			$this->setStatus(Est_Handler_Abstract::STATUS_SKIPPED);
+			$this->setStatus(Est_Handler_Interface::STATUS_SKIPPED);
 			return true;
 		}
 
@@ -70,7 +70,7 @@ class Est_Handler_PrependFileContent extends Est_Handler_Abstract {
 
 		// check if this content is already present in targetFile
 		if (strpos($targetFileContent, $contentFileContent) !== false) {
-			$this->setStatus(Est_Handler_Abstract::STATUS_ALREADYINPLACE);
+			$this->setStatus(Est_Handler_Interface::STATUS_ALREADYINPLACE);
 			$this->addMessage(new Est_Message(
 				sprintf('Content from file "%s" already present in "%s"', $contentFile, $targetFile),
 				Est_Message::SKIPPED
@@ -81,7 +81,7 @@ class Est_Handler_PrependFileContent extends Est_Handler_Abstract {
 			if ($result === false) {
 				throw new Exception(sprintf('Error while writing file "%s"', $targetFile));
 			}
-			$this->setStatus(Est_Handler_Abstract::STATUS_DONE);
+			$this->setStatus(Est_Handler_Interface::STATUS_DONE);
 			$this->addMessage(new Est_Message(
 				sprintf('Prepended content from file "%s" to "%s"', $contentFile, $targetFile),
 				Est_Message::OK
