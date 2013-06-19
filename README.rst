@@ -20,7 +20,7 @@ This is an example CSV file:
 	# Dev settings,,,,,,,,,
 	Est_Handler_Magento_CoreConfigData,default,0,dev/debug/profiler,0,0,0,0,,
 
-.. image:: docs/csv.jpg
+.. image:: doc/csv.jpg
 
 Each row is one setting. An Setting is changed by a "Handler", and each Handler support up to 3 Parameters.
 The next Columns represent the Values for the Environments, and you may use the "DEFAULT" key for a default setting.
