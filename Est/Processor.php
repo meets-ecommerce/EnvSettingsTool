@@ -71,9 +71,12 @@ class Est_Processor {
 	 * @throws Exception
 	 * @return Est_Handler_Abstract
 	 */
-	public function getHandler($handler, $param1, $param2, $param3) {
-		$this->handlerCollection->buildFromSettingsCSVFile($this->settingsFilePath, $this->environment);
-		$handler = $this->handlerCollection->getHandler($handler, $param1, $param2, $param3);
+	public function getHandler($handlerClassName, $param1, $param2, $param3) {
+		$this->handlerCollection->buildFromSettingsCSVFile($this->settingsFilePath,$this->environment);
+		$handler = $this->handlerCollection->getHandler($handlerClassName, $param1, $param2, $param3);
+		if ($handler === false) {
+			throw new Exception('No handler found with given specification: '."$handlerClassName, $param1, $param2, $param3");
+		}
 		return $handler;
 	}
 

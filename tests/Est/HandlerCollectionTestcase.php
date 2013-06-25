@@ -2,26 +2,17 @@
 
 class Est_HandlerCollectionTestcase extends PHPUnit_Framework_TestCase {
 
-	/**
-	 * @var Est_HandlerCollection
-	 */
-	private $handlerCollection;
-
-	public function setUp() {
-		$this->handlerCollection = new Est_HandlerCollection();
-	}
 
 	/**
 	 * @test
 	 */
 	public function canBuildFromCSVAndReplaceByEnvironmentVariable() {
-		$path = dirname(__FILE__).'/../fixtures/Settings.csv';
-		putenv('DEBUG=TESTCONTENT');
 
-		$this->handlerCollection->buildFromSettingsCSVFile($path,'latest');
+		putenv('DEBUG=TESTCONTENT');
+		$handlerCollection = $this->getHandlerCollectionFromFixture();
 
 		$handlers=array();
-		foreach ($this->handlerCollection as $handler) {
+		foreach ($handlerCollection as $handler) {
 			$handlers[]=$handler;
 		}
 		$this->assertEquals(2,count($handlers));
@@ -31,6 +22,25 @@ class Est_HandlerCollectionTestcase extends PHPUnit_Framework_TestCase {
 
 		$handler2 = $handlers[1];
 		$this->assertEquals($handler2->getValue(),'TESTCONTENT','either did not use fallback content or replacement with ENVVariable did not work');
+	}
+	/**
+	 * @ return Est_HandlerCollection
+	 */
+	private function getHandlerCollectionFromFixture() {
+		$path = dirname(__FILE__).'/../fixtures/Settings.csv';
+		$hc = new Est_HandlerCollection();
+		$hc->buildFromSettingsCSVFile($path,'latest');
+		return $hc;
+	}
+
+	/**
+	 * @test
+	 */
+	public function canGetHandler() {
+		$handlerCollection = $this->getHandlerCollectionFromFixture();
+		$handler = $handlerCollection->getHandler('Est_Handler_XmlFile','app/etc/local.xml','/config/global/resources/default_setup/connection/host','');
+		$this->assertTrue($handler instanceof Est_Handler_XmlFile);
+
 	}
 
 	/**
