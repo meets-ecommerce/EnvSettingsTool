@@ -34,6 +34,11 @@ class Est_HandlerCollection implements Iterator {
 		if ($columnIndex <= 3) { // those are reserved for handler class, param1-3
 			throw new Exception('Environment cannot be defined in one of the first four columns');
 		}
+		if ($columnIndexDefault === false) {
+			$columnIndexDefault = $columnIndex;
+			// This is a workaround to not make $this->getValue($row[$columnIndex], $row[$columnIndexDefault]); believe that column "0" is the
+			// default column and use the handlername then. We could come up with a smarter way of handling non existing default columns
+		}
 
 		while ($row = fgetcsv($fh)) {
 			$handlerClassname = trim($row[0]);
@@ -91,6 +96,7 @@ class Est_HandlerCollection implements Iterator {
 	 * @return string
 	 */
 	protected function getValue($value, $defaultValue) {
+		// TODO value '0' is also empty. But this could be the value that we actually want
 		if (empty($value)) {
 			$value = $defaultValue;
 		}
