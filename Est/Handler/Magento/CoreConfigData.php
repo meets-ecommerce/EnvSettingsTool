@@ -13,6 +13,7 @@ class Est_Handler_Magento_CoreConfigData extends Est_Handler_AbstractDatabase {
 	 * Protected method that actually applies the settings. This method is implemented in the inheriting classes and
 	 * called from ->apply
 	 *
+	 * @throws Exception
 	 * @return bool
 	 */
 	protected function _apply() {
@@ -39,7 +40,7 @@ class Est_Handler_Magento_CoreConfigData extends Est_Handler_AbstractDatabase {
 
 		$conn = $this->getDbConnection();
 
-		if ($this->value == '--delete--') {
+		if (strtolower(trim($this->value)) == '--delete--') {
 			$query = $conn->prepare('DELETE FROM `core_config_data` WHERE `scope` LIKE :scope AND `scope_id` LIKE :scopeId AND `path` LIKE :path');
 			$res = $query->execute($sqlParameters);
 

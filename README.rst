@@ -25,10 +25,25 @@ This is an example CSV file:
 Each row is one setting. An Setting is changed by a "Handler", and each Handler support up to 3 Parameters.
 The next Columns represent the Values for the Environments, and you may use the "DEFAULT" key for a default setting.
 
-The Values also support the special syntax ###ENV:VARIABLE### to read stuff from the (bash) environment Variables.
 
 Usage
 -----------------
+The Tool comes with 3 commands.
+Just print out the Handler and Values that would be executed:
+::
+	php dryRun.php devbox ../Settings.csv
+
+Execute the handlers and show status summary:
+::
+	php apply.php devbox ../Settings.csv
+
+Returns the value for a certain handler. For example - this can be used to get Database values for other scripts:
+::
+	php value.php devbox ../Settings.csv HandlerName param1 param2 param3
+
+	DB_HOST=`EnvSettingsTool/value.php ${ENVIRONMENT} Settings.csv Est_Handler_XmlFile app/etc/local.xml /config/global/resources/default_setup/connection/host`
+
+
 Setup.sh:
 ::
 	echo "Apply Settings from ../Setup/Settings.csv for Magento Instance"
@@ -54,6 +69,8 @@ List of Handlers:
 	*	Param1: scope
 	*	Param2: scopeid
 	*	Param3: path
+	* 	If the value field of a row for the current environment is '--delete--' (whtout the quotes) the matched row will be deleted
+	* 	param1, param2, or param3 can use the wildcard '%' (without the quotes) instead a concrete values. This will make EnvSettingsTool apply the value to multiple existing rows
 
 *	Est_Handler_MarkerReplace: Simple replaces a given marker in a file
 	*	Param1: Relative Path to File (relative to current directory)
@@ -63,3 +80,15 @@ List of Handlers:
 	*	Param1: contentFile path
 	*	Param2: targetFile path
 
+Special Feature
+-----------------
+* Skipping rows: if the value field of a row for the current environment is '--skip--' (without the quotes) this handler will not be executed
+* The Values also support the special syntax ###ENV:VARIABLE### to read stuff from the (bash) environment Variables.
+* Loops: param1, param2 and param3 can specify loops using this syntax: {{1|2|3}}. In this case the same handler will be executed multiple times using every values. \
+	It's also possible to have loops in two or all three parameters. In this case all combinations will be executed. \
+	Example: \
+		Est_Handler_Magento_CoreConfigData('stores', '{{1,2,3}}', 'web/unsecure/base_url') = 'http://www.foo.com' \
+	Is equal to: \
+		Est_Handler_Magento_CoreConfigData('stores', '1', 'web/unsecure/base_url') = 'http://www.foo.com' \
+		Est_Handler_Magento_CoreConfigData('stores', '2', 'web/unsecure/base_url') = 'http://www.foo.com' \
+		Est_Handler_Magento_CoreConfigData('stores', '3', 'web/unsecure/base_url') = 'http://www.foo.com' \

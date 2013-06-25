@@ -2,28 +2,20 @@
 
 class Est_HandlerCollectionTestcase extends PHPUnit_Framework_TestCase {
 
-	/**
-	 * @var Est_HandlerCollection
-	 */
-	private $handlerCollection;
-
-	public function setUp() {
-		$this->handlerCollection = new Est_HandlerCollection();
-	}
 
 	/**
 	 * @test
 	 */
 	public function canBuildFromCSVAndReplaceByEnvironmentVariable() {
-		$path = dirname(__FILE__).'/../fixtures/Settings.csv';
-		putenv('DEBUG=TESTCONTENT');
 
-		$this->handlerCollection->buildFromSettingsCSVFile($path,'latest');
+		putenv('DEBUG=TESTCONTENT');
+		$handlerCollection = $this->getHandlerCollectionFromFixture();
 
 		$handlers=array();
-		foreach ($this->handlerCollection as $handler) {
+		foreach ($handlerCollection as $handler) {
 			$handlers[]=$handler;
 		}
+
 		$this->assertEquals(2,count($handlers));
 		$handler1 = $handlers[0];
 		$this->assertTrue($handler1 instanceof Est_Handler_XmlFile);
@@ -32,5 +24,108 @@ class Est_HandlerCollectionTestcase extends PHPUnit_Framework_TestCase {
 		$handler2 = $handlers[1];
 		$this->assertEquals($handler2->getValue(),'TESTCONTENT','either did not use fallback content or replacement with ENVVariable did not work');
 	}
+
+	/**
+	 * @test
+	 */
+	public function canUseDefautlValues() {
+		/*
+			Est_Handler_Magento_CoreConfigData,1,foo,bar,defaultvalue,
+			Est_Handler_Magento_CoreConfigData,2,foo,bar,defaultvalue,,
+			Est_Handler_Magento_CoreConfigData,3,foo,bar,defaultvalue,0,
+			Est_Handler_Magento_CoreConfigData,4,foo,bar,defaultvalue, ,
+			Est_Handler_Magento_CoreConfigData,5,foo,bar,,
+		*/
+		$handlerCollection = $this->getHandlerCollectionFromFixture('SettingsWithDefaultValues.csv');
+
+		$this->assertEquals('defaultvalue', $handlerCollection->getHandler('Est_Handler_Magento_CoreConfigData',1,'foo','bar')->getValue());
+		$this->assertEquals('defaultvalue', $handlerCollection->getHandler('Est_Handler_Magento_CoreConfigData',2,'foo','bar')->getValue());
+		$this->assertEquals(0, $handlerCollection->getHandler('Est_Handler_Magento_CoreConfigData',3,'foo','bar')->getValue());
+		$this->assertEquals(' ', $handlerCollection->getHandler('Est_Handler_Magento_CoreConfigData',4,'foo','bar')->getValue());
+		$this->assertEquals('', $handlerCollection->getHandler('Est_Handler_Magento_CoreConfigData',5,'foo','bar')->getValue());
+
+	}
+
+
+	/**
+	 * @test
+	 */
+	public function canGetHandler() {
+		$handlerCollection = $this->getHandlerCollectionFromFixture();
+		$handler = $handlerCollection->getHandler('Est_Handler_XmlFile','app/etc/local.xml','/config/global/resources/default_setup/connection/host','');
+		$this->assertTrue($handler instanceof Est_Handler_XmlFile);
+
+	}
+
+	/**
+	 * @test
+	 */
+	public function canUseHandlersWithOneLoopParams() {
+		$handlerCollection = $this->getHandlerCollectionFromFixture('SettingsWithOneLoop.csv');
+
+		$handlers = array();
+		foreach ($handlerCollection as $handler) {
+			$handlers[] = $handler;
+		}
+
+		$this->assertCount(2, $handlers);
+
+		$this->assertEquals('default', $handlers[0]->getParam1());
+		$this->assertEquals('default', $handlers[1]->getParam1());
+
+		$this->assertEquals('1', $handlers[0]->getParam2());
+		$this->assertEquals('2', $handlers[1]->getParam2());
+
+		$this->assertEquals('dev/debug/profiler', $handlers[0]->getParam3());
+		$this->assertEquals('dev/debug/profiler', $handlers[1]->getParam3());
+
+		$this->assertEquals('test2', $handlers[0]->getValue());
+		$this->assertEquals('test2', $handlers[1]->getValue());
+	}
+
+	/**
+	 * @test
+	 */
+	public function canUseHandlersWithTwoLoopParams() {
+		$handlerCollection = $this->getHandlerCollectionFromFixture('SettingsWithTwoLoops.csv');
+
+		$handlers = array();
+		foreach ($handlerCollection as $handler) {
+			$handlers[] = $handler;
+		}
+
+		$this->assertCount(4, $handlers);
+
+		$this->assertEquals('store', $handlers[0]->getParam1());
+		$this->assertEquals('store', $handlers[1]->getParam1());
+		$this->assertEquals('website', $handlers[2]->getParam1());
+		$this->assertEquals('website', $handlers[3]->getParam1());
+
+		$this->assertEquals('1', $handlers[0]->getParam2());
+		$this->assertEquals('2', $handlers[1]->getParam2());
+		$this->assertEquals('1', $handlers[2]->getParam2());
+		$this->assertEquals('2', $handlers[3]->getParam2());
+
+		$this->assertEquals('dev/debug/profiler', $handlers[0]->getParam3());
+		$this->assertEquals('dev/debug/profiler', $handlers[1]->getParam3());
+		$this->assertEquals('dev/debug/profiler', $handlers[2]->getParam3());
+		$this->assertEquals('dev/debug/profiler', $handlers[3]->getParam3());
+
+		$this->assertEquals('test2', $handlers[0]->getValue());
+		$this->assertEquals('test2', $handlers[1]->getValue());
+		$this->assertEquals('test2', $handlers[2]->getValue());
+		$this->assertEquals('test2', $handlers[3]->getValue());
+	}
+
+	/**
+	 * @ return Est_HandlerCollection
+	 */
+	private function getHandlerCollectionFromFixture($file='Settings.csv') {
+		$path = dirname(__FILE__).'/../fixtures/'.$file;
+		$hc = new Est_HandlerCollection();
+		$hc->buildFromSettingsCSVFile($path,'latest');
+		return $hc;
+	}
+
 
 }

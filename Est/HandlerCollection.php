@@ -8,8 +8,18 @@ class Est_HandlerCollection implements Iterator {
 	protected $handlers = array();
 
 
-
-	public function buildFromSettingsCSVFile($csvFile,$environment,$defaultEnvironment='DEFAULT') {
+	/**
+	 * Build from settings csv file
+	 *
+	 * @param $csvFile
+	 * @param $environment
+	 * @param string $defaultEnvironment
+	 * @throws Exception
+	 */
+	public function buildFromSettingsCSVFile($csvFile, $environment, $defaultEnvironment='DEFAULT') {
+		if (!is_file($csvFile)) {
+			throw new Exception('SettingsFile is not present here: "'.$csvFile.'"');
+		}
 		$fh = fopen($csvFile, 'r');
 
 		// first line: labels
@@ -39,34 +49,55 @@ class Est_HandlerCollection implements Iterator {
 			if (!class_exists($handlerClassname)) {
 				throw new Exception(sprintf('Could not find handler class "%s"', $handlerClassname));
 			}
-			$handler = new $handlerClassname(); /* @var $handler Est_Handler_Abstract */
-			if (!$handler instanceof Est_Handler_Abstract) {
-				throw new Exception(sprintf('Handler of class "%s" is not an instance of Est_Handler_Abstract', $handlerClassname));
-			}
 
-			// set parameters
+
+			// resolve loops in param1, param2, param3 using {{...|...|...}}
+			$values = array();
 			for ($i=1; $i<=3; $i++) {
-				$setterMethod = 'setParam'.$i;
-				$handler->$setterMethod($row[$i]);
+				$value = trim($row[$i]);
+				if (substr($value, 0, 2) == '{{' && substr($value, -2) == '}}') {
+					$value = substr($value, 2, -2);
+					$values[$i] = Est_Div::trimExplode('|', $value, true);
+				} else {
+					$values[$i] = array($value);
+				}
 			}
 
-			$value = $this->getValue($row[$columnIndex],$row[$columnIndexDefault]);
-			// set value
-			$handler->setValue($value);
-			$this->addHandler($handler);
+			foreach ($values[1] as $param1) {
+				foreach ($values[2] as $param2) {
+					foreach ($values[3] as $param3) {
+
+						$handler = new $handlerClassname(); /* @var $handler Est_Handler_Abstract */
+						if (!$handler instanceof Est_Handler_Abstract) {
+							throw new Exception(sprintf('Handler of class "%s" is not an instance of Est_Handler_Abstract', $handlerClassname));
+						}
+
+						$handler->setParam1($param1);
+						$handler->setParam2($param2);
+						$handler->setParam3($param3);
+
+						$value = $this->getValueFromRow($row, $columnIndex, $columnIndexDefault);
+
+						// set value
+						$handler->setValue($value);
+						$this->addHandler($handler);
+					}
+				}
+			}
+
 		}
 	}
 
 	/**
-	 * @param $value
-	 * @param $defaultValue
-	 * @return string
+	 * @param $row
+	 * @param $columnIndex
+	 * @param $columnIndexDefault
 	 */
-	protected function getValue($value,$defaultValue) {
-		if (empty($value)) {
-			$value = $defaultValue;
+	private function getValueFromRow($row, $columnIndex, $columnIndexDefault) {
+		$value = $row[$columnIndex];
+		if ($columnIndexDefault !== false && $value == '') {
+			$value = $row[$columnIndexDefault];
 		}
-
 		return $this->replaceWithEnvironmentVariables($value);
 	}
 
@@ -97,47 +128,58 @@ class Est_HandlerCollection implements Iterator {
 	 */
 	public function addHandler(Est_Handler_Interface $handler) {
 		$hash = $this->getHandlerHash($handler);
-		if (isset( $this->handlers[$hash] )) {
+		if (isset($this->handlers[$hash])) {
 			throw new Exception('Handler with this specification already exist. Cannot add: '.$handler->getLabel());
 		}
-		$this->handlers[]=$handler;
+		$this->handlers[$hash] = $handler;
 	}
 
 	/**
+	 * Get handler
+	 *
 	 * @param $handlerClassname
 	 * @param $p1
 	 * @param $p2
 	 * @param $p3
 	 * @return Est_Handler_Interface || bool
 	 */
-	public function getHandler($handlerClassname,$p1,$p2,$p3) {
-		if (isset($this->handlers[$this->getHandlerHashByValues($handlerClassname,$p1,$p2,$p3)])) {
-			return $this->handlers[$this->getHandlerHashByValues($handlerClassname,$p1,$p2,$p3)];
-		}
-		else {
+	public function getHandler($handlerClassname, $p1, $p2, $p3) {
+		if (isset($this->handlers[$this->getHandlerHashByValues($handlerClassname, $p1, $p2, $p3)])) {
+			return $this->handlers[$this->getHandlerHashByValues($handlerClassname, $p1, $p2, $p3)];
+		} else {
 			return false;
 		}
 	}
 
 	/**
-	 * @param $handlerClassname
-	 * @param $p1
-	 * @param $p2
-	 * @param $p3
+	 * Get Handler hash
+	 *
+	 * @param Est_Handler_Interface $handler
+	 * @internal param $handlerClassname
+	 * @internal param $p1
+	 * @internal param $p2
+	 * @internal param $p3
 	 * @return string
 	 */
 	protected function getHandlerHash(Est_Handler_Interface $handler) {
-		return $this->getHandlerHashByValues(get_class($handler),$handler->getParam1(),$handler->getParam2(),$handler->getParam3());
+		return $this->getHandlerHashByValues(
+			get_class($handler),
+			$handler->getParam1(),
+			$handler->getParam2(),
+			$handler->getParam3()
+		);
 	}
 
 	/**
+	 * Get handler hash by values
+	 *
 	 * @param $handlerClassname
 	 * @param $p1
 	 * @param $p2
 	 * @param $p3
 	 * @return string
 	 */
-	protected function getHandlerHashByValues($handlerClassname,$p1,$p2,$p3) {
+	protected function getHandlerHashByValues($handlerClassname, $p1, $p2, $p3) {
 		return md5($handlerClassname.$p1.$p2.$p3);
 	}
 
