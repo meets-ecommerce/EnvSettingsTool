@@ -30,7 +30,8 @@ try {
 	}
 	catch (Exception $e) {
 		$processor->printResults();
-		echo "\nERROR: Stopping execution because an error has occured!\n\n";
+		echo PHP_EOL.PHP_EOL.PHP_EOL."ERROR: Stopping execution because an error has occured!".PHP_EOL;
+		echo "\tDetail:".$e->getMessage().$e->getTraceAsString().PHP_EOL.PHP_EOL;
 		exit(1);
 	}
 
