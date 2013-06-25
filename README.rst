@@ -28,6 +28,22 @@ The next Columns represent the Values for the Environments, and you may use the 
 
 Usage
 -----------------
+The Tool comes with 3 commands.
+Just print out the Handler and Values that would be executed:
+::
+	php dryRun.php devbox ../Settings.csv
+
+Execute the handlers and show status summary:
+::
+	php apply.php devbox ../Settings.csv
+
+Returns the value for a certain handler. For example - this can be used to get Database values for other scripts:
+::
+	php value.php devbox ../Settings.csv HandlerName param1 param2 param3
+
+	DB_HOST=`EnvSettingsTool/value.php ${ENVIRONMENT} Settings.csv Est_Handler_XmlFile app/etc/local.xml /config/global/resources/default_setup/connection/host`
+
+
 Setup.sh:
 ::
 	echo "Apply Settings from ../Setup/Settings.csv for Magento Instance"

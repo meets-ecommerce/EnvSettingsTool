@@ -48,16 +48,27 @@ class Est_Processor {
 	 * @return bool
 	 */
 	public function apply() {
-
 		$this->handlerCollection->buildFromSettingsCSVFile($this->settingsFilePath,$this->environment);
-
 		foreach ($this->handlerCollection as $handler) { /* @var $handler Est_Handler_Abstract */
 			$res = $handler->apply();
 			if (!$res) {
 				throw new Exception('An error in handler'.$handler->getLabel());
 			}
 		}
+		return true;
+	}
 
+	/**
+	 * Apply settings to current environment
+	 *
+	 * @throws Exception
+	 * @return bool
+	 */
+	public function dryRun() {
+		$this->handlerCollection->buildFromSettingsCSVFile($this->settingsFilePath,$this->environment);
+		foreach ($this->handlerCollection as $handler) { /* @var $handler Est_Handler_Abstract */
+			$this->output($handler->getLabel());
+		}
 		return true;
 	}
 
