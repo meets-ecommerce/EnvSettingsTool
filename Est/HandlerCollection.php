@@ -89,11 +89,14 @@ class Est_HandlerCollection implements Iterator {
 	}
 
 	/**
-	 * @param $row
-	 * @param $columnIndex
-	 * @param $columnIndexDefault
+	 * Get value from row
+	 *
+	 * @param array $row
+	 * @param string $columnIndex
+	 * @param string $columnIndexDefault
+	 * @return string
 	 */
-	private function getValueFromRow($row, $columnIndex, $columnIndexDefault) {
+	private function getValueFromRow(array $row, $columnIndex, $columnIndexDefault) {
 		$value = $row[$columnIndex];
 		if ($columnIndexDefault !== false && $value == '') {
 			$value = $row[$columnIndexDefault];
