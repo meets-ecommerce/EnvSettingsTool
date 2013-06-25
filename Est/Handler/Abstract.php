@@ -38,10 +38,16 @@ abstract class Est_Handler_Abstract implements Est_Handler_Interface {
 	 */
 	public function apply() {
 		try {
-			$this->setStatus(Est_Handler_Interface::STATUS_RUNNING);
-			$result = $this->_apply();
-			if ($this->getStatus() == Est_Handler_Interface::STATUS_RUNNING) {
-				$this->setStatus(Est_Handler_Interface::STATUS_FINISHED);
+			if (strtolower(trim($this->value)) == '--skip--') {
+				$this->setStatus(Est_Handler_Interface::STATUS_SKIPPED);
+				$this->addMessage(new Est_Message('Skipped because of --skip-- value'), Est_Message::SKIPPED);
+				$result = true;
+			} else {
+				$this->setStatus(Est_Handler_Interface::STATUS_RUNNING);
+				$result = $this->_apply();
+				if ($this->getStatus() == Est_Handler_Interface::STATUS_RUNNING) {
+					$this->setStatus(Est_Handler_Interface::STATUS_FINISHED);
+				}
 			}
 			return $result;
 		} catch (Exception $e) {
