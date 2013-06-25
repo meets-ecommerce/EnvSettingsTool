@@ -119,16 +119,32 @@ class Est_HandlerCollectionTestcase extends PHPUnit_Framework_TestCase {
 	}
 
 	/**
+	 * @test
+	 */
+	public function canUseReferencesToOtherColumns() {
+		$handlerCollection = $this->getHandlerCollectionFromFixture('SettingsWithReferences.csv', 'environment_b');
+
+		$handlers = array();
+		foreach ($handlerCollection as $handler) {
+			$handlers[] = $handler;
+		}
+
+		$this->assertCount(1, $handlers);
+		$this->assertEquals('foo', $handlerCollection->getHandler('Est_Handler_Magento_CoreConfigData','p1','p2','p3')->getValue());
+	}
+
+	/**
 	 * Get handler collection from fixture
 	 *
 	 * @param string $file
+	 * @param string $environment
 	 * @return Est_HandlerCollection
 	 */
-	private function getHandlerCollectionFromFixture($file='Settings.csv') {
+	private function getHandlerCollectionFromFixture($file='Settings.csv', $environment='latest') {
 		$path = dirname(__FILE__).'/../fixtures/'.$file;
-		$hc = new Est_HandlerCollection();
-		$hc->buildFromSettingsCSVFile($path,'latest');
-		return $hc;
+		$handlerCollection = new Est_HandlerCollection();
+		$handlerCollection->buildFromSettingsCSVFile($path, $environment);
+		return $handlerCollection;
 	}
 
 
