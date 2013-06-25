@@ -4,3 +4,4 @@ Est_Handler_Magento_CoreConfigData,2,foo,bar,defaultvalue,,
 Est_Handler_Magento_CoreConfigData,3,foo,bar,defaultvalue,0,
 Est_Handler_Magento_CoreConfigData,4,foo,bar,defaultvalue, ,
 Est_Handler_Magento_CoreConfigData,5,foo,bar,,
+Est_Handler_Magento_CoreConfigData,6,foo,bar,defaultvalue,--empty--

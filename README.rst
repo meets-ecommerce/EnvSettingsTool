@@ -80,7 +80,7 @@ List of Handlers:
 	*	Param1: contentFile path
 	*	Param2: targetFile path
 
-Special Feature
+Special Features
 -----------------
 * Skipping rows: if the value field of a row for the current environment is '--skip--' (without the quotes) this handler will not be executed
 * The Values also support the special syntax ###ENV:VARIABLE### to read stuff from the (bash) environment Variables.
@@ -92,3 +92,4 @@ Special Feature
 		Est_Handler_Magento_CoreConfigData('stores', '1', 'web/unsecure/base_url') = 'http://www.foo.com' \
 		Est_Handler_Magento_CoreConfigData('stores', '2', 'web/unsecure/base_url') = 'http://www.foo.com' \
 		Est_Handler_Magento_CoreConfigData('stores', '3', 'web/unsecure/base_url') = 'http://www.foo.com' \
+* An empty cell falls back the configured DEFAULT column. If you actually need that value to be empty use '--empty--' instead

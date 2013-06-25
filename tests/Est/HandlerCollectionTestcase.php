@@ -43,6 +43,7 @@ class Est_HandlerCollectionTestcase extends PHPUnit_Framework_TestCase {
 		$this->assertEquals(0, $handlerCollection->getHandler('Est_Handler_Magento_CoreConfigData',3,'foo','bar')->getValue());
 		$this->assertEquals(' ', $handlerCollection->getHandler('Est_Handler_Magento_CoreConfigData',4,'foo','bar')->getValue());
 		$this->assertEquals('', $handlerCollection->getHandler('Est_Handler_Magento_CoreConfigData',5,'foo','bar')->getValue());
+		$this->assertEquals('', $handlerCollection->getHandler('Est_Handler_Magento_CoreConfigData',6,'foo','bar')->getValue());
 
 	}
 
@@ -118,7 +119,10 @@ class Est_HandlerCollectionTestcase extends PHPUnit_Framework_TestCase {
 	}
 
 	/**
-	 * @ return Est_HandlerCollection
+	 * Get handler collection from fixture
+	 *
+	 * @param string $file
+	 * @return Est_HandlerCollection
 	 */
 	private function getHandlerCollectionFromFixture($file='Settings.csv') {
 		$path = dirname(__FILE__).'/../fixtures/'.$file;

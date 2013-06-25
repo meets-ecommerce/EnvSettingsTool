@@ -77,6 +77,9 @@ class Est_HandlerCollection implements Iterator {
 						$handler->setParam3($param3);
 
 						$value = $this->getValueFromRow($row, $columnIndex, $columnIndexDefault);
+						if (strtolower(trim($value)) == '--empty--') {
+							$value = '';
+						}
 
 						// set value
 						$handler->setValue($value);
