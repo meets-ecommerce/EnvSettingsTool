@@ -25,14 +25,23 @@ try {
 	if (empty($_SERVER['argv'][3])) {
 		throw new Exception('No handler specified!');
 	}
-	$handler = $_SERVER['argv'][3];
+	$handlerName = $_SERVER['argv'][3];
 
 	$param1 = isset($_SERVER['argv'][4]) ? $_SERVER['argv'][4] : '';
 	$param2 = isset($_SERVER['argv'][5]) ? $_SERVER['argv'][5] : '';
 	$param3 = isset($_SERVER['argv'][6]) ? $_SERVER['argv'][6] : '';
 
 	$processor = new Est_Processor($env, $settingsFile);
-	$handler = $processor->getHandler($handler, $param1, $param2, $param3);
+	$handler = $processor->getHandler(
+		$handlerName,
+		(string)$param1,
+		(string)$param2,
+		(string)$param3
+	);
+
+	if ($handler === false) {
+		throw new Exception (sprintf('Handler "%s(%s, %s, %s)" not found.', $handlerName, $param1, $param2, $param3));
+	}
 
 	echo $handler->getValue();
 
