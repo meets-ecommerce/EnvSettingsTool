@@ -63,3 +63,9 @@ List of Handlers:
 	*	Param1: contentFile path
 	*	Param2: targetFile path
 
+Special Feature
+-----------------
+* Skipping rows: if the value field of a row for the current environment is '--skip--' (without the quotes) this handler will not be executed
+* Est_Handler_Magento_CoreConfigData
+	* If the value field of a row for the current environment is '--delete--' (whtout the quotes) the matched row will be deleted
+	* param1, param2, or param3 can be '%' (without the quotes) instaed a conrect values. This will make EnvSettingsTool apply the value to multiple existing rows
