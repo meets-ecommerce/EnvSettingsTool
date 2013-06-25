@@ -44,12 +44,12 @@ class Est_Processor {
 	/**
 	 * Apply settings to current environment
 	 *
+	 * @throws Exception
 	 * @return bool
 	 */
 	public function apply() {
 
 		$this->handlerCollection->buildFromSettingsCSVFile($this->settingsFilePath,$this->environment);
-
 
 		foreach ($this->handlerCollection as $handler) { /* @var $handler Est_Handler_Abstract */
 			$res = $handler->apply();
@@ -72,7 +72,7 @@ class Est_Processor {
 	 * @return Est_Handler_Abstract
 	 */
 	public function getHandler($handler, $param1, $param2, $param3) {
-		$this->handlerCollection->buildFromSettingsCSVFile($this->settingsFilePath,$this->environment);
+		$this->handlerCollection->buildFromSettingsCSVFile($this->settingsFilePath, $this->environment);
 		$handler = $this->handlerCollection->getHandler($handler, $param1, $param2, $param3);
 		return $handler;
 	}
