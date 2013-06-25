@@ -68,8 +68,6 @@ Special Feature
 -----------------
 * Skipping rows: if the value field of a row for the current environment is '--skip--' (without the quotes) this handler will not be executed
 * The Values also support the special syntax ###ENV:VARIABLE### to read stuff from the (bash) environment Variables.
-* Est_Handler_Magento_CoreConfigData
-
 * Loops: param1, param2 and param3 can specify loops using this syntax: {{1|2|3}}. In this case the same handler will be executed multiple times using every values. \
 	It's also possible to have loops in two or all three parameters. In this case all combinations will be executed. \
 	Example: \
