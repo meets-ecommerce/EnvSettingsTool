@@ -124,47 +124,58 @@ class Est_HandlerCollection implements Iterator {
 	 */
 	public function addHandler(Est_Handler_Interface $handler) {
 		$hash = $this->getHandlerHash($handler);
-		if (isset( $this->handlers[$hash] )) {
+		if (isset($this->handlers[$hash])) {
 			throw new Exception('Handler with this specification already exist. Cannot add: '.$handler->getLabel());
 		}
-		$this->handlers[]=$handler;
+		$this->handlers[$hash] = $handler;
 	}
 
 	/**
+	 * Get handler
+	 *
 	 * @param $handlerClassname
 	 * @param $p1
 	 * @param $p2
 	 * @param $p3
 	 * @return Est_Handler_Interface || bool
 	 */
-	public function getHandler($handlerClassname,$p1,$p2,$p3) {
-		if (isset($this->handlers[$this->getHandlerHashByValues($handlerClassname,$p1,$p2,$p3)])) {
-			return $this->handlers[$this->getHandlerHashByValues($handlerClassname,$p1,$p2,$p3)];
-		}
-		else {
+	public function getHandler($handlerClassname, $p1, $p2, $p3) {
+		if (isset($this->handlers[$this->getHandlerHashByValues($handlerClassname, $p1, $p2, $p3)])) {
+			return $this->handlers[$this->getHandlerHashByValues($handlerClassname, $p1, $p2, $p3)];
+		} else {
 			return false;
 		}
 	}
 
 	/**
-	 * @param $handlerClassname
-	 * @param $p1
-	 * @param $p2
-	 * @param $p3
+	 * Get Handler hash
+	 *
+	 * @param Est_Handler_Interface $handler
+	 * @internal param $handlerClassname
+	 * @internal param $p1
+	 * @internal param $p2
+	 * @internal param $p3
 	 * @return string
 	 */
 	protected function getHandlerHash(Est_Handler_Interface $handler) {
-		return $this->getHandlerHashByValues(get_class($handler),$handler->getParam1(),$handler->getParam2(),$handler->getParam3());
+		return $this->getHandlerHashByValues(
+			get_class($handler),
+			$handler->getParam1(),
+			$handler->getParam2(),
+			$handler->getParam3()
+		);
 	}
 
 	/**
+	 * Get handler hash by values
+	 *
 	 * @param $handlerClassname
 	 * @param $p1
 	 * @param $p2
 	 * @param $p3
 	 * @return string
 	 */
-	protected function getHandlerHashByValues($handlerClassname,$p1,$p2,$p3) {
+	protected function getHandlerHashByValues($handlerClassname, $p1, $p2, $p3) {
 		return md5($handlerClassname.$p1.$p2.$p3);
 	}
 
