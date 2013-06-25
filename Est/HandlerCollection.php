@@ -7,6 +7,11 @@ class Est_HandlerCollection implements Iterator {
 	 */
 	protected $handlers = array();
 
+	/**
+	 * @var array
+	 */
+	protected $labels = array();
+
 
 	/**
 	 * Build from settings csv file
@@ -23,19 +28,9 @@ class Est_HandlerCollection implements Iterator {
 		$fh = fopen($csvFile, 'r');
 
 		// first line: labels
-		$labels = fgetcsv($fh);
-		if (!$labels) {
+		$this->labels = fgetcsv($fh);
+		if (!$this->labels) {
 			throw new Exception('Error while reading labels from csv file');
-		}
-
-		$columnIndex = array_search($environment, $labels);
-		$columnIndexDefault = array_search($defaultEnvironment, $labels);
-
-		if ($columnIndex === false) {
-			throw new Exception('Could not find current environment in csv file');
-		}
-		if ($columnIndex <= 3) { // those are reserved for handler class, param1-3
-			throw new Exception('Environment cannot be defined in one of the first four columns');
 		}
 
 		while ($row = fgetcsv($fh)) {
@@ -76,7 +71,11 @@ class Est_HandlerCollection implements Iterator {
 						$handler->setParam2($param2);
 						$handler->setParam3($param3);
 
-						$value = $this->getValueFromRow($row, $columnIndex, $columnIndexDefault);
+						$value = $this->getValueFromRow(
+							$row,
+							$environment,
+							$defaultEnvironment
+						);
 						if (strtolower(trim($value)) == '--empty--') {
 							$value = '';
 						}
@@ -92,18 +91,54 @@ class Est_HandlerCollection implements Iterator {
 	}
 
 	/**
+	 * Get column index for environment
+	 *
+	 * @param $environment
+	 * @param bool $checkOnly if set false will be returned instead of an exception thrown
+	 * @throws Exception
+	 * @return mixed
+	 */
+	protected function getColumnIndexForEnvironment($environment, $checkOnly=false) {
+		$columnIndex = array_search($environment, $this->labels);
+		if ($columnIndex === false) {
+			if ($checkOnly) {
+				return false;
+			} else {
+				throw new Exception('Could not find environment '.$environment.' in csv file');
+			}
+		}
+		if ($columnIndex <= 3) { // those are reserved for handler class, param1-3
+			if ($checkOnly) {
+				return false;
+			} else {
+				throw new Exception('Environment cannot be defined in one of the first four columns');
+			}
+		}
+		return $columnIndex;
+	}
+
+	/**
 	 * Get value from row
 	 *
 	 * @param array $row
-	 * @param string $columnIndex
-	 * @param string $columnIndexDefault
+	 * @param string $environment
+	 * @param string $fallbackEnvironment
 	 * @return string
 	 */
-	private function getValueFromRow(array $row, $columnIndex, $columnIndexDefault) {
-		$value = $row[$columnIndex];
-		if ($columnIndexDefault !== false && $value == '') {
-			$value = $row[$columnIndexDefault];
+	private function getValueFromRow(array $row, $environment, $fallbackEnvironment) {
+
+		$value = $row[$this->getColumnIndexForEnvironment($environment)];
+		if ($value == '--empty--') {
+			$value = '';
+		} elseif (preg_match('/###REF:([^#]*)###/', $value, $matches)) {
+			$value = $this->getValueFromRow($row, $matches[1], $fallbackEnvironment);
+		} elseif ($value == '') {
+			$defaultColumnIndex = $this->getColumnIndexForEnvironment($fallbackEnvironment, true);
+			if ($defaultColumnIndex !== false) {
+				$value = $row[$defaultColumnIndex];
+			}
 		}
+
 		return $this->replaceWithEnvironmentVariables($value);
 	}
 
