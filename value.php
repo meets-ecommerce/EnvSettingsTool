@@ -39,10 +39,6 @@ try {
 		(string)$param3
 	);
 
-	if ($handler === false) {
-		throw new Exception (sprintf('Handler "%s(%s, %s, %s)" not found.', $handlerName, $param1, $param2, $param3));
-	}
-
 	echo $handler->getValue();
 
 } catch (Exception $e) {

@@ -17,6 +17,9 @@ class Est_HandlerCollection implements Iterator {
 	 * @throws Exception
 	 */
 	public function buildFromSettingsCSVFile($csvFile, $environment, $defaultEnvironment='DEFAULT') {
+		if (!is_file($csvFile)) {
+			throw new Exception('SettingsFile is not present here: "'.$csvFile.'"');
+		}
 		$fh = fopen($csvFile, 'r');
 
 		// first line: labels
@@ -33,11 +36,6 @@ class Est_HandlerCollection implements Iterator {
 		}
 		if ($columnIndex <= 3) { // those are reserved for handler class, param1-3
 			throw new Exception('Environment cannot be defined in one of the first four columns');
-		}
-		if ($columnIndexDefault === false) {
-			$columnIndexDefault = $columnIndex;
-			// This is a workaround to not make $this->getValue($row[$columnIndex], $row[$columnIndexDefault]); believe that column "0" is the
-			// default column and use the handlername then. We could come up with a smarter way of handling non existing default columns
 		}
 
 		while ($row = fgetcsv($fh)) {
@@ -78,7 +76,7 @@ class Est_HandlerCollection implements Iterator {
 						$handler->setParam2($param2);
 						$handler->setParam3($param3);
 
-						$value = $this->getValue($row[$columnIndex], $row[$columnIndexDefault]);
+						$value = $this->getValueFromRow($row, $columnIndex, $columnIndexDefault);
 
 						// set value
 						$handler->setValue($value);
@@ -91,14 +89,14 @@ class Est_HandlerCollection implements Iterator {
 	}
 
 	/**
-	 * @param $value
-	 * @param $defaultValue
-	 * @return string
+	 * @param $row
+	 * @param $columnIndex
+	 * @param $columnIndexDefault
 	 */
-	protected function getValue($value, $defaultValue) {
-		// TODO value '0' is also empty. But this could be the value that we actually want
-		if (empty($value)) {
-			$value = $defaultValue;
+	private function getValueFromRow($row, $columnIndex, $columnIndexDefault) {
+		$value = $row[$columnIndex];
+		if ($columnIndexDefault !== false && $value == '') {
+			$value = $row[$columnIndexDefault];
 		}
 		return $this->replaceWithEnvironmentVariables($value);
 	}

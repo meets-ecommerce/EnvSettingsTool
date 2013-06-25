@@ -15,6 +15,7 @@ class Est_HandlerCollectionTestcase extends PHPUnit_Framework_TestCase {
 		foreach ($handlerCollection as $handler) {
 			$handlers[]=$handler;
 		}
+
 		$this->assertEquals(2,count($handlers));
 		$handler1 = $handlers[0];
 		$this->assertTrue($handler1 instanceof Est_Handler_XmlFile);
@@ -23,15 +24,28 @@ class Est_HandlerCollectionTestcase extends PHPUnit_Framework_TestCase {
 		$handler2 = $handlers[1];
 		$this->assertEquals($handler2->getValue(),'TESTCONTENT','either did not use fallback content or replacement with ENVVariable did not work');
 	}
+
 	/**
-	 * @ return Est_HandlerCollection
+	 * @test
 	 */
-	private function getHandlerCollectionFromFixture() {
-		$path = dirname(__FILE__).'/../fixtures/Settings.csv';
-		$hc = new Est_HandlerCollection();
-		$hc->buildFromSettingsCSVFile($path,'latest');
-		return $hc;
+	public function canUseDefautlValues() {
+		/*
+			Est_Handler_Magento_CoreConfigData,1,foo,bar,defaultvalue,
+			Est_Handler_Magento_CoreConfigData,2,foo,bar,defaultvalue,,
+			Est_Handler_Magento_CoreConfigData,3,foo,bar,defaultvalue,0,
+			Est_Handler_Magento_CoreConfigData,4,foo,bar,defaultvalue, ,
+			Est_Handler_Magento_CoreConfigData,5,foo,bar,,
+		*/
+		$handlerCollection = $this->getHandlerCollectionFromFixture('SettingsWithDefaultValues.csv');
+
+		$this->assertEquals('defaultvalue', $handlerCollection->getHandler('Est_Handler_Magento_CoreConfigData',1,'foo','bar')->getValue());
+		$this->assertEquals('defaultvalue', $handlerCollection->getHandler('Est_Handler_Magento_CoreConfigData',2,'foo','bar')->getValue());
+		$this->assertEquals(0, $handlerCollection->getHandler('Est_Handler_Magento_CoreConfigData',3,'foo','bar')->getValue());
+		$this->assertEquals(' ', $handlerCollection->getHandler('Est_Handler_Magento_CoreConfigData',4,'foo','bar')->getValue());
+		$this->assertEquals('', $handlerCollection->getHandler('Est_Handler_Magento_CoreConfigData',5,'foo','bar')->getValue());
+
 	}
+
 
 	/**
 	 * @test
@@ -46,12 +60,11 @@ class Est_HandlerCollectionTestcase extends PHPUnit_Framework_TestCase {
 	/**
 	 * @test
 	 */
-	public function paramsWithOneLoop() {
-		$path = dirname(__FILE__).'/../fixtures/SettingsWithOneLoop.csv';
-		$this->handlerCollection->buildFromSettingsCSVFile($path, 'latest');
+	public function canUseHandlersWithOneLoopParams() {
+		$handlerCollection = $this->getHandlerCollectionFromFixture('SettingsWithOneLoop.csv');
 
 		$handlers = array();
-		foreach ($this->handlerCollection as $handler) {
+		foreach ($handlerCollection as $handler) {
 			$handlers[] = $handler;
 		}
 
@@ -73,12 +86,11 @@ class Est_HandlerCollectionTestcase extends PHPUnit_Framework_TestCase {
 	/**
 	 * @test
 	 */
-	public function paramsWithTwoLoops() {
-		$path = dirname(__FILE__).'/../fixtures/SettingsWithTwoLoops.csv';
-		$this->handlerCollection->buildFromSettingsCSVFile($path, 'latest');
+	public function canUseHandlersWithTwoLoopParams() {
+		$handlerCollection = $this->getHandlerCollectionFromFixture('SettingsWithTwoLoops.csv');
 
 		$handlers = array();
-		foreach ($this->handlerCollection as $handler) {
+		foreach ($handlerCollection as $handler) {
 			$handlers[] = $handler;
 		}
 
@@ -103,6 +115,16 @@ class Est_HandlerCollectionTestcase extends PHPUnit_Framework_TestCase {
 		$this->assertEquals('test2', $handlers[1]->getValue());
 		$this->assertEquals('test2', $handlers[2]->getValue());
 		$this->assertEquals('test2', $handlers[3]->getValue());
+	}
+
+	/**
+	 * @ return Est_HandlerCollection
+	 */
+	private function getHandlerCollectionFromFixture($file='Settings.csv') {
+		$path = dirname(__FILE__).'/../fixtures/'.$file;
+		$hc = new Est_HandlerCollection();
+		$hc->buildFromSettingsCSVFile($path,'latest');
+		return $hc;
 	}
 
 
