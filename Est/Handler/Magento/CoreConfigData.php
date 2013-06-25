@@ -56,6 +56,10 @@ class Est_Handler_Magento_CoreConfigData extends Est_Handler_AbstractDatabase {
 				$this->addMessage(new Est_Message('No rows deleted.', Est_Message::SKIPPED));
 			}
 
+		} elseif ($this->value == '--skip--') {
+
+			$this->addMessage(new Est_Message('Skipping (because of --skip-- value)', Est_Message::SKIPPED));
+
 		} else {
 
 			$query = $conn->prepare('SELECT `value` FROM `core_config_data` WHERE `scope` LIKE :scope AND `scope_id` LIKE :scopeId AND `path` LIKE :path');
