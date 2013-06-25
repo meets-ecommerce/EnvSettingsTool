@@ -75,6 +75,6 @@ Special Feature
 	Example: \
 		Est_Handler_Magento_CoreConfigData('stores', '{{1,2,3}}', 'web/unsecure/base_url') = 'http://www.foo.com' \
 	Is equal to: \
-		=> Est_Handler_Magento_CoreConfigData('stores', '1', 'web/unsecure/base_url') = 'http://www.foo.com'
-		=> Est_Handler_Magento_CoreConfigData('stores', '2', 'web/unsecure/base_url') = 'http://www.foo.com'
-		=> Est_Handler_Magento_CoreConfigData('stores', '3', 'web/unsecure/base_url') = 'http://www.foo.com'
+		Est_Handler_Magento_CoreConfigData('stores', '1', 'web/unsecure/base_url') = 'http://www.foo.com' \
+		Est_Handler_Magento_CoreConfigData('stores', '2', 'web/unsecure/base_url') = 'http://www.foo.com' \
+		Est_Handler_Magento_CoreConfigData('stores', '3', 'web/unsecure/base_url') = 'http://www.foo.com' \
