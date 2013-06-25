@@ -27,9 +27,9 @@ try {
 	try {
 		$res = $processor->apply();
 		$processor->printResults();
-	}
-	catch (Exception $e) {
+	} catch (Exception $e) {
 		$processor->printResults();
+		echo $e->getMessage() . "\n";
 		echo "\nERROR: Stopping execution because an error has occured!\n\n";
 		exit(1);
 	}
