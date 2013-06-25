@@ -8,8 +8,15 @@ class Est_HandlerCollection implements Iterator {
 	protected $handlers = array();
 
 
-
-	public function buildFromSettingsCSVFile($csvFile,$environment,$defaultEnvironment='DEFAULT') {
+	/**
+	 * Build from settings csv file
+	 *
+	 * @param $csvFile
+	 * @param $environment
+	 * @param string $defaultEnvironment
+	 * @throws Exception
+	 */
+	public function buildFromSettingsCSVFile($csvFile, $environment, $defaultEnvironment='DEFAULT') {
 		$fh = fopen($csvFile, 'r');
 
 		// first line: labels
@@ -39,21 +46,42 @@ class Est_HandlerCollection implements Iterator {
 			if (!class_exists($handlerClassname)) {
 				throw new Exception(sprintf('Could not find handler class "%s"', $handlerClassname));
 			}
-			$handler = new $handlerClassname(); /* @var $handler Est_Handler_Abstract */
-			if (!$handler instanceof Est_Handler_Abstract) {
-				throw new Exception(sprintf('Handler of class "%s" is not an instance of Est_Handler_Abstract', $handlerClassname));
-			}
 
-			// set parameters
+
+			// resolve loops in param1, param2, param3 using {{...|...|...}}
+			$values = array();
 			for ($i=1; $i<=3; $i++) {
-				$setterMethod = 'setParam'.$i;
-				$handler->$setterMethod($row[$i]);
+				$value = trim($row[$i]);
+				if (substr($value, 0, 2) == '{{' && substr($value, -2) == '}}') {
+					$value = substr($value, 2, -2);
+					$values[$i] = Est_Div::trimExplode('|', $value, true);
+				} else {
+					$values[$i] = array($value);
+				}
 			}
 
-			$value = $this->getValue($row[$columnIndex],$row[$columnIndexDefault]);
-			// set value
-			$handler->setValue($value);
-			$this->addHandler($handler);
+			foreach ($values[1] as $param1) {
+				foreach ($values[2] as $param2) {
+					foreach ($values[3] as $param3) {
+
+						$handler = new $handlerClassname(); /* @var $handler Est_Handler_Abstract */
+						if (!$handler instanceof Est_Handler_Abstract) {
+							throw new Exception(sprintf('Handler of class "%s" is not an instance of Est_Handler_Abstract', $handlerClassname));
+						}
+
+						$handler->setParam1($param1);
+						$handler->setParam2($param2);
+						$handler->setParam3($param3);
+
+						$value = $this->getValue($row[$columnIndex], $row[$columnIndexDefault]);
+
+						// set value
+						$handler->setValue($value);
+						$this->addHandler($handler);
+					}
+				}
+			}
+
 		}
 	}
 
@@ -62,11 +90,10 @@ class Est_HandlerCollection implements Iterator {
 	 * @param $defaultValue
 	 * @return string
 	 */
-	protected function getValue($value,$defaultValue) {
+	protected function getValue($value, $defaultValue) {
 		if (empty($value)) {
 			$value = $defaultValue;
 		}
-
 		return $this->replaceWithEnvironmentVariables($value);
 	}
 

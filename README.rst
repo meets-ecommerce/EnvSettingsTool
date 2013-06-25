@@ -69,3 +69,9 @@ Special Feature
 * Est_Handler_Magento_CoreConfigData
 	* If the value field of a row for the current environment is '--delete--' (whtout the quotes) the matched row will be deleted
 	* param1, param2, or param3 can be '%' (without the quotes) instaed a conrect values. This will make EnvSettingsTool apply the value to multiple existing rows
+* Loops: param1, param2 and param3 can specify loops using this syntax: {{1|2|3}}. In this case the same handler will be executed multiple times using every values. \
+	It's also possible to have loops in two or all three parameters. In this case all combinations will be executed.
+	Example: Est_Handler_Magento_CoreConfigData('stores', '{{1,2,3}}', 'web/unsecure/base_url') = 'http://www.foo.com'
+	=> Est_Handler_Magento_CoreConfigData('stores', '1', 'web/unsecure/base_url') = 'http://www.foo.com'
+	=> Est_Handler_Magento_CoreConfigData('stores', '2', 'web/unsecure/base_url') = 'http://www.foo.com'
+	=> Est_Handler_Magento_CoreConfigData('stores', '3', 'web/unsecure/base_url') = 'http://www.foo.com'
