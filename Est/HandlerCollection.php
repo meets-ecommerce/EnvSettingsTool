@@ -196,10 +196,6 @@ class Est_HandlerCollection implements Iterator {
 	 * Get Handler hash
 	 *
 	 * @param Est_Handler_Interface $handler
-	 * @internal param $handlerClassname
-	 * @internal param $p1
-	 * @internal param $p2
-	 * @internal param $p3
 	 * @return string
 	 */
 	protected function getHandlerHash(Est_Handler_Interface $handler) {
