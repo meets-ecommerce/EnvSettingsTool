@@ -155,7 +155,7 @@ class Est_HandlerCollection implements Iterator {
 			return $string;
 		}
 		foreach ($matches[0] as $index=>$completeMatch) {
-			if (getenv($matches[1][$index]) == FALSE) {
+			if (getenv($matches[1][$index]) === FALSE) {
 				throw new \Exception('Expect an environmentvariable '.$matches[1][$index]);
 			}
 			$string = str_replace($completeMatch,getenv($matches[1][$index]),$string);
