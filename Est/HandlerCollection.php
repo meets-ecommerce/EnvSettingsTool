@@ -126,15 +126,21 @@ class Est_HandlerCollection implements Iterator {
 	 * @return string
 	 */
 	private function getValueFromRow(array $row, $environment, $fallbackEnvironment) {
-
-		$value = $row[$this->getColumnIndexForEnvironment($environment)];
-		if ($value == '--empty--') {
-			$value = '';
-		} elseif (preg_match('/###REF:([^#]*)###/', $value, $matches)) {
-			$value = $this->getValueFromRow($row, $matches[1], $fallbackEnvironment);
-		} elseif ($value == '') {
-			$defaultColumnIndex = $this->getColumnIndexForEnvironment($fallbackEnvironment, true);
-			if ($defaultColumnIndex !== false) {
+		$value              = null;
+		$defaultColumnIndex = $this->getColumnIndexForEnvironment($fallbackEnvironment, true);
+		if (isset($row[$this->getColumnIndexForEnvironment($environment)])) {
+			$value = $row[$this->getColumnIndexForEnvironment($environment)];
+			if ($value == '--empty--') {
+				$value = '';
+			} elseif (preg_match('/###REF:([^#]*)###/', $value, $matches)) {
+				$value = $this->getValueFromRow($row, $matches[1], $fallbackEnvironment);
+			} elseif ($value == '') {
+				if ($defaultColumnIndex !== FALSE) {
+					$value = $row[$defaultColumnIndex];
+				}
+			}
+		} else {
+			if ($defaultColumnIndex !== FALSE) {
 				$value = $row[$defaultColumnIndex];
 			}
 		}
@@ -149,17 +155,18 @@ class Est_HandlerCollection implements Iterator {
 	 * @throws \Exception
 	 */
 	protected function replaceWithEnvironmentVariables($string) {
-		$matches=array();
-		preg_match_all('/###ENV:([^#]*)###/',$string,$matches,PREG_PATTERN_ORDER);
+		$matches = array();
+		preg_match_all('/###ENV:([^#]*)###/', $string, $matches, PREG_PATTERN_ORDER);
 		if (!is_array($matches) || !is_array($matches[0])) {
 			return $string;
 		}
-		foreach ($matches[0] as $index=>$completeMatch) {
-			if (getenv($matches[1][$index]) === FALSE) {
-				throw new \Exception('Expect an environmentvariable '.$matches[1][$index]);
+		foreach ($matches[0] as $index => $completeMatch) {
+			if (getenv($matches[1][$index]) === false) {
+				throw new \Exception('Expected an environment variable ' . $matches[1][$index] . ' is not set');
 			}
-			$string = str_replace($completeMatch,getenv($matches[1][$index]),$string);
+			$string = str_replace($completeMatch, getenv($matches[1][$index]), $string);
 		}
+
 		return $string;
 	}
 
@@ -170,7 +177,7 @@ class Est_HandlerCollection implements Iterator {
 	public function addHandler(Est_Handler_Interface $handler) {
 		$hash = $this->getHandlerHash($handler);
 		if (isset($this->handlers[$hash])) {
-			throw new Exception('Handler with this specification already exist. Cannot add: '.$handler->getLabel());
+			throw new Exception('Handler with this specification already exist. Cannot add: ' . $handler->getLabel());
 		}
 		$this->handlers[$hash] = $handler;
 	}
