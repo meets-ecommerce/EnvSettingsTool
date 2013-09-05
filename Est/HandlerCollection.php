@@ -145,6 +145,8 @@ class Est_HandlerCollection implements Iterator {
 			}
 		}
 
+		$value = str_replace('###ENVIRONMENT###', $environment, $value);
+
 		return $this->replaceWithEnvironmentVariables($value);
 	}
 

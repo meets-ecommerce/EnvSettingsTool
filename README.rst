@@ -94,3 +94,4 @@ Special Features
 		Est_Handler_Magento_CoreConfigData('stores', '3', 'web/unsecure/base_url') = 'http://www.foo.com' \
 * An empty cell falls back the configured DEFAULT column. If you actually need that value to be empty use '--empty--' instead
 * You can reference to values from another environment by adding this to the value: '###REF:targetenvironment###'
+* ###ENVIRONMENT### will be replaced with current environment name (e.g. "production"). This replacement is done after resolving any references to other environments. So the environment being inserted here is always the actual environment requested and not the one of a referenced value.
