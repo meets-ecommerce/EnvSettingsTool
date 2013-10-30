@@ -74,7 +74,8 @@ class Est_HandlerCollection implements Iterator {
 						$value = $this->getValueFromRow(
 							$row,
 							$environment,
-							$defaultEnvironment
+							$defaultEnvironment,
+                            $handler
 						);
 						if (strtolower(trim($value)) == '--empty--') {
 							$value = '';
@@ -123,9 +124,10 @@ class Est_HandlerCollection implements Iterator {
 	 * @param array $row
 	 * @param string $environment
 	 * @param string $fallbackEnvironment
+	 * @param Est_Handler_Abstract $handler
 	 * @return string
 	 */
-	private function getValueFromRow(array $row, $environment, $fallbackEnvironment) {
+	private function getValueFromRow(array $row, $environment, $fallbackEnvironment, Est_Handler_Abstract $handler=null) {
 		$value              = null;
 		$defaultColumnIndex = $this->getColumnIndexForEnvironment($fallbackEnvironment, true);
 		if (isset($row[$this->getColumnIndexForEnvironment($environment)])) {
@@ -146,6 +148,12 @@ class Est_HandlerCollection implements Iterator {
 		}
 
 		$value = str_replace('###ENVIRONMENT###', $environment, $value);
+
+		if (!is_null($handler)) {
+			$value = str_replace('###PARAM1###', $handler->getParam1(), $value);
+			$value = str_replace('###PARAM2###', $handler->getParam2(), $value);
+			$value = str_replace('###PARAM3###', $handler->getParam3(), $value);
+		}
 
 		return $this->replaceWithEnvironmentVariables($value);
 	}
