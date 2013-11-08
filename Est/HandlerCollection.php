@@ -50,9 +50,12 @@ class Est_HandlerCollection implements Iterator {
 			$values = array();
 			for ($i=1; $i<=3; $i++) {
 				$value = trim($row[$i]);
-				if (substr($value, 0, 2) == '{{' && substr($value, -2) == '}}') {
-					$value = substr($value, 2, -2);
-					$values[$i] = Est_Div::trimExplode('|', $value, true);
+				$matches = array();
+				if (preg_match('/{{(.*)}}/', $value, $matches)) {
+					$tmp = Est_Div::trimExplode('|', $matches[1], true);
+					foreach ($tmp as $v) {
+						$values[$i][] = preg_replace('/{{(.*)}}/', $v, $value);
+					}
 				} else {
 					$values[$i] = array($value);
 				}
