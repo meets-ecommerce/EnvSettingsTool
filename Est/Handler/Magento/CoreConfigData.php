@@ -32,6 +32,24 @@ class Est_Handler_Magento_CoreConfigData extends Est_Handler_AbstractDatabase {
 			throw new Exception("No path found (param2)");
 		}
 
+        if (!in_array($scope, array('default', 'stores', 'websites', '%'))) {
+            throw new Exception("Scope must be 'default', 'stores', 'websites', or '%'");
+        }
+
+        if ($scope == 'stores' && !is_numeric($scopeId)) {
+            // do a store code lookup
+            $code = $scopeId;
+            $scopeId = $this->getStoreIdFromCode($code);
+            $this->addMessage(new Est_Message("Found store id '$scopeId' for code '$code'", Est_Message::INFO));
+        }
+
+        if ($scope == 'websites' && !is_numeric($scopeId)) {
+            // do a website code lookup
+            $code = $scopeId;
+            $scopeId = $this->getWebsiteIdFromCode($code);
+            $this->addMessage(new Est_Message("Found website id '$scopeId' for code '$code'", Est_Message::INFO));
+        }
+
 		$sqlParameters = array(
 			':scope' => $scope,
 			':scopeId' => $scopeId,
@@ -80,6 +98,7 @@ class Est_Handler_Magento_CoreConfigData extends Est_Handler_AbstractDatabase {
 
 				if ($res === false) {
 					// TODO: include speaking error message
+                    // var_dump( $conn->errorInfo());
 					throw new Exception('Error while updating value');
 				}
 
@@ -103,6 +122,50 @@ class Est_Handler_Magento_CoreConfigData extends Est_Handler_AbstractDatabase {
 
 		return true;
 	}
+
+    /**
+     * Look up store id for a given store code
+     *
+     * @param $code
+     * @return mixed
+     * @throws Exception
+     */
+    protected function getStoreIdFromCode($code) {
+        $conn = $this->getDbConnection();
+        $query = $conn->prepare('SELECT `store_id` FROM `core_store` WHERE `code` LIKE :code');
+        $query->execute(array(':code' => $code));
+        $query->setFetchMode(PDO::FETCH_ASSOC);
+        $results = $query->fetch();
+        if (count($results) == 0) {
+            throw new Exception("Could not find a store for code '$code'");
+        } elseif (count($results) > 1) {
+            throw new Exception("Found more than once store for code '$code'");
+        }
+        $result = end($results);
+        return $result['store_id'];
+    }
+
+    /**
+     * Look up website id for a given website code
+     *
+     * @param $code
+     * @return mixed
+     * @throws Exception
+     */
+    protected function getWebsiteIdFromCode($code) {
+        $conn = $this->getDbConnection();
+        $query = $conn->prepare('SELECT `website_id` FROM `core_website` WHERE `code` LIKE :code');
+        $query->execute(array(':code' => $code));
+        $query->setFetchMode(PDO::FETCH_ASSOC);
+        $results = $query->fetch();
+        if (count($results) == 0) {
+            throw new Exception("Could not find a website for code '$code'");
+        } elseif (count($results) > 1) {
+            throw new Exception("Found more than once website for code '$code'");
+        }
+        $result = end($results);
+        return $result['website_id'];
+    }
 
 	/**
 	 * Read database connection parameters from local.xml file

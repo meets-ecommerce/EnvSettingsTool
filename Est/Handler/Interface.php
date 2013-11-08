@@ -24,6 +24,13 @@ interface Est_Handler_Interface {
 	 */
 	public function apply();
 
+    /**
+     * This will be called while registering the handler
+     *
+     * @return mixed
+     */
+    public function register();
+
 	public function setParam1($param1);
 
 	public function setParam2($param2);

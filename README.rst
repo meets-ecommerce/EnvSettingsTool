@@ -66,11 +66,13 @@ List of Handlers:
 * 	Est_Handler_Magento_CoreConfigData: Changes values of core_config_data table in a  Magento instance.
 	It reads its database parameters from app/etc/local.xml - therefore it needs to be placed after any adjustments of DB Credentials.
 
-	*	Param1: scope
-	*	Param2: scopeid
+	*	Param1: scope ('default', 'stores', 'websites', or '%')
+	*	Param2: scopeid (store id, store code, website id, website code, 0 for default scope or '%')
 	*	Param3: path
 	* 	If the value field of a row for the current environment is '--delete--' (whtout the quotes) the matched row will be deleted
 	* 	param1, param2, or param3 can use the wildcard '%' (without the quotes) instead a concrete values. This will make EnvSettingsTool apply the value to multiple existing rows
+	* 	If scope is 'stores' the scope id can be a store code instead of a store id.
+	* 	If scope is 'website' the scope id can be a website code instead of a website id.
 
 *	Est_Handler_MarkerReplace: Simple replaces a given marker in a file
 	*	Param1: Relative Path to File (relative to current directory)
@@ -79,6 +81,9 @@ List of Handlers:
 *	Est_Handler_PrependFileContent: Adds the content from one file to the content of another file
 	*	Param1: contentFile path
 	*	Param2: targetFile path
+
+*   Est_Handler_SetVar: Allows you to set variables that can be used in all following handlers using ###VAR:<variableName>
+    * Param1: variable name
 
 Special Features
 -----------------

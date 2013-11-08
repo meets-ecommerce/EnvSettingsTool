@@ -86,6 +86,9 @@ class Est_HandlerCollection implements Iterator {
 
 						// set value
 						$handler->setValue($value);
+
+                        $handler->register();
+
 						$this->addHandler($handler);
 					}
 				}
@@ -157,6 +160,11 @@ class Est_HandlerCollection implements Iterator {
 			$value = str_replace('###PARAM2###', $handler->getParam2(), $value);
 			$value = str_replace('###PARAM3###', $handler->getParam3(), $value);
 		}
+
+        while (preg_match('/###VAR:([^#]*)###/', $value, $matches)) {
+            $var = Est_VariableStorage::get($matches[1]);
+            $value = preg_replace('/###VAR:([^#]*)###/', $var, $value, 1);
+        }
 
 		return $this->replaceWithEnvironmentVariables($value);
 	}

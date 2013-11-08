@@ -6,6 +6,7 @@ class Est_Message {
 	const WARNING = 1;
 	const ERROR = 2;
 	const SKIPPED = 3;
+    const INFO = 4;
 
 	/**
 	 * @var string
@@ -55,15 +56,17 @@ class Est_Message {
 	 */
 	public function getColoredText() {
 
+        $color = null;
 		switch ($this->getLevel()) {
 			case Est_Message::OK: $color = 'green'; break;
 			case Est_Message::WARNING: $color = 'light_red'; break;
 			case Est_Message::SKIPPED: $color = 'blue'; break;
 			case Est_Message::ERROR: $color = 'red'; break;
+            case Est_Message::INFO: $color = null; break;
 			default: throw new Exception('Invalid level');
 		}
 
-		return Est_CliOutput::getColoredString($this->getText(), $color);
+		return is_null($color) ? $this->getText() : Est_CliOutput::getColoredString($this->getText(), $color);
 	}
 
 }

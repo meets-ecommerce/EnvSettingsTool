@@ -60,6 +60,14 @@ abstract class Est_Handler_Abstract implements Est_Handler_Interface {
 		}
 	}
 
+    protected function _register() {
+        // nothing happens here by default
+    }
+
+    public function register() {
+        return $this->_register();
+    }
+
 	public function setParam1($param1) {
 		$this->param1 = $param1;
 	}
