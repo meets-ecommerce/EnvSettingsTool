@@ -1,0 +1,7 @@
+Handler,Param1,Param2,Param3,DEFAULT,latest
+Est_Handler_Magento_CoreConfigData,1,foo,bar,,###PARAM1###,
+Est_Handler_Magento_CoreConfigData,2,foo,bar,,###PARAM2###,
+Est_Handler_Magento_CoreConfigData,3,foo,bar,,###PARAM3###,
+Est_Handler_Magento_CoreConfigData,4,foo,bar,,###ENVIRONMENT###,
+Est_Handler_Magento_CoreConfigData,5,foo,bar,###ENVIRONMENT###,,
+Est_Handler_Magento_CoreConfigData,6,foo,bar,,inline-###PARAM1###-parameter,

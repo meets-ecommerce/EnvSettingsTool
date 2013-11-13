@@ -133,7 +133,107 @@ class Est_HandlerCollectionTestcase extends PHPUnit_Framework_TestCase {
 		$this->assertEquals('foo', $handlerCollection->getHandler('Est_Handler_Magento_CoreConfigData','p1','p2','p3')->getValue());
 	}
 
-	/**
+    /**
+     * @test
+     */
+    public function canUseHandlersWithInlineLoop() {
+        $handlerCollection = $this->getHandlerCollectionFromFixture('SettingsWithInlineLoop.csv');
+
+        $handlers = array();
+        foreach ($handlerCollection as $handler) {
+            $handlers[] = $handler;
+        }
+
+        $this->assertCount(3, $handlers);
+
+        $this->assertEquals('param1', $handlers[0]->getParam1());
+        $this->assertEquals('param1', $handlers[1]->getParam1());
+        $this->assertEquals('param1', $handlers[2]->getParam1());
+
+        $this->assertEquals('param2', $handlers[0]->getParam2());
+        $this->assertEquals('param2', $handlers[1]->getParam2());
+        $this->assertEquals('param2', $handlers[2]->getParam2());
+
+        $this->assertEquals('a/b/c', $handlers[0]->getParam3());
+        $this->assertEquals('a/b/d', $handlers[1]->getParam3());
+        $this->assertEquals('a/b/e', $handlers[2]->getParam3());
+
+        $this->assertEquals('test2', $handlers[0]->getValue());
+        $this->assertEquals('test2', $handlers[1]->getValue());
+        $this->assertEquals('test2', $handlers[2]->getValue());
+    }
+
+    /**
+     * @test
+     */
+    public function settingsWithVariable() {
+        $handlerCollection = $this->getHandlerCollectionFromFixture('SettingsWithVariables.csv');
+
+        $handlers = array();
+        foreach ($handlerCollection as $handler) {
+            $handlers[] = $handler;
+        }
+
+        $this->assertCount(7, $handlers);
+
+        $this->assertEquals('', $handlers[0]->getValue());
+        $this->assertEquals('value2', $handlers[3]->getValue());
+        $this->assertEquals('value1', $handlers[4]->getValue());
+        $this->assertEquals('inline-value1-usage', $handlers[5]->getValue());
+        $this->assertEquals('value1', $handlers[6]->getValue());
+    }
+
+    /**
+     * @test
+     */
+    public function settingsWithCommentsAndEmptyLines() {
+        $handlerCollection = $this->getHandlerCollectionFromFixture('SettingsWithEmptyLinesAndComments.csv');
+
+        $handlers = array();
+        foreach ($handlerCollection as $handler) {
+            $handlers[] = $handler;
+        }
+
+        $this->assertCount(5, $handlers);
+    }
+
+    /**
+     * @test
+     */
+    public function exceptionWhenSameSignature() {
+        $this->setExpectedException('Exception');
+        $handlerCollection = $this->getHandlerCollectionFromFixture('SettingsWithSameParameters.csv');
+    }
+
+    /**
+     * @test
+     */
+    public function settingsWithMarker() {
+        $handlerCollection = $this->getHandlerCollectionFromFixture('SettingsWithMarkers.csv');
+
+        $handlers = array();
+        foreach ($handlerCollection as $handler) {
+            $handlers[] = $handler;
+        }
+
+        $this->assertCount(6, $handlers);
+
+        for ($i=0; $i<6; $i++) {
+            $this->assertEquals($i+1, $handlers[$i]->getParam1());
+            $this->assertEquals('foo', $handlers[$i]->getParam2());
+            $this->assertEquals('bar', $handlers[$i]->getParam3());
+        }
+
+        $this->assertEquals('1', $handlers[0]->getValue());
+        $this->assertEquals('foo', $handlers[1]->getValue());
+        $this->assertEquals('bar', $handlers[2]->getValue());
+        $this->assertEquals('latest', $handlers[3]->getValue());
+        $this->assertEquals('latest', $handlers[4]->getValue());
+        $this->assertEquals('inline-6-parameter', $handlers[5]->getValue());
+    }
+
+
+    /**
 	 * Get handler collection from fixture
 	 *
 	 * @param string $file

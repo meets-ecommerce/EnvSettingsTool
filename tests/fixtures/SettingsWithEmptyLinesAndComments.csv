@@ -1,0 +1,12 @@
+Handler,Param1,Param2,Param3,DEFAULT,latest
+# This is a comment,,,,,,
+,,,,,,
+Est_Handler_Magento_CoreConfigData,2,foo,bar,,test,
+Est_Handler_Magento_CoreConfigData,3,foo,bar,,test,
+,,,,,,
+,,,,,,
+Est_Handler_Magento_CoreConfigData,4,foo,bar,,test,
+Est_Handler_Magento_CoreConfigData,5,foo,bar,test,,
+# This is a comment,,,,,,
+# This is a comment,,,,,,
+Est_Handler_Magento_CoreConfigData,6,foo,bar,,test,

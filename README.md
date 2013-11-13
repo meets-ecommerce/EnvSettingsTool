@@ -100,6 +100,10 @@ Example
 
 ## Special Features
 
+### Comments and empty lines
+
+Empty lines or lines starting with '#' or '/' will be ignored. Use this to insert some comments into the csv file.
+
 ### Skipping rows
 
 If the value field of a row for the current environment is `--skip--` this handler will not be executed

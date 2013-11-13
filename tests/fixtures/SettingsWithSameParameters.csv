@@ -1,0 +1,4 @@
+Handler,Param1,Param2,Param3,DEFAULT,latest
+Est_Handler_Magento_CoreConfigData,1,foo,bar,,test1,
+Est_Handler_Magento_CoreConfigData,2,foo,bar,,test2,
+Est_Handler_Magento_CoreConfigData,2,foo,bar,,test3,
