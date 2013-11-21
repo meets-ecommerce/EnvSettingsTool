@@ -9,6 +9,8 @@
  */
 class Est_Handler_Magento_CoreConfigData extends Est_Handler_AbstractDatabase {
 
+    protected $tablePrefix = '';
+
 	/**
 	 * Protected method that actually applies the settings. This method is implemented in the inheriting classes and
 	 * called from ->apply
@@ -59,7 +61,7 @@ class Est_Handler_Magento_CoreConfigData extends Est_Handler_AbstractDatabase {
 		$conn = $this->getDbConnection();
 
 		if (strtolower(trim($this->value)) == '--delete--') {
-			$query = $conn->prepare('DELETE FROM `core_config_data` WHERE `scope` LIKE :scope AND `scope_id` LIKE :scopeId AND `path` LIKE :path');
+			$query = $conn->prepare('DELETE FROM `'.$this->tablePrefix.'core_config_data` WHERE `scope` LIKE :scope AND `scope_id` LIKE :scopeId AND `path` LIKE :path');
 			$res = $query->execute($sqlParameters);
 
 			if ($res === false) {
@@ -76,7 +78,7 @@ class Est_Handler_Magento_CoreConfigData extends Est_Handler_AbstractDatabase {
 
 		} else {
 
-			$query = $conn->prepare('SELECT `value` FROM `core_config_data` WHERE `scope` LIKE :scope AND `scope_id` LIKE :scopeId AND `path` LIKE :path');
+			$query = $conn->prepare('SELECT `value` FROM `'.$this->tablePrefix.'core_config_data` WHERE `scope` LIKE :scope AND `scope_id` LIKE :scopeId AND `path` LIKE :path');
 			$query->execute($sqlParameters);
 
 			$query->setFetchMode(PDO::FETCH_ASSOC);
@@ -93,7 +95,7 @@ class Est_Handler_Magento_CoreConfigData extends Est_Handler_AbstractDatabase {
 			} elseif ($currentValue === false) {
 				// value doesn't exist: insert instead of update
 
-				$res = $conn->prepare('INSERT INTO `core_config_data` (`scope`, `scope_id`, `path`, value) VALUES (:scope, :scopeId, :path, :value)')
+				$res = $conn->prepare('INSERT INTO `'.$this->tablePrefix.'core_config_data` (`scope`, `scope_id`, `path`, value) VALUES (:scope, :scopeId, :path, :value)')
 					->execute($sqlParameters);
 
 				if ($res === false) {
@@ -108,7 +110,7 @@ class Est_Handler_Magento_CoreConfigData extends Est_Handler_AbstractDatabase {
 				$this->addMessage(new Est_Message(sprintf('Value "%s" is already in place. Skipping.', $currentValue['value']), Est_Message::SKIPPED));
 			} else {
 
-				$res = $conn->prepare('UPDATE `core_config_data` SET `value` = :value WHERE `scope` LIKE :scope AND `scope_id` LIKE :scopeId AND `path` LIKE :path')
+				$res = $conn->prepare('UPDATE `'.$this->tablePrefix.'core_config_data` SET `value` = :value WHERE `scope` LIKE :scope AND `scope_id` LIKE :scopeId AND `path` LIKE :path')
 					->execute($sqlParameters);
 
 				if ($res === false) {
@@ -132,7 +134,7 @@ class Est_Handler_Magento_CoreConfigData extends Est_Handler_AbstractDatabase {
      */
     protected function getStoreIdFromCode($code) {
         $conn = $this->getDbConnection();
-        $query = $conn->prepare('SELECT `store_id` FROM `core_store` WHERE `code` LIKE :code');
+        $query = $conn->prepare('SELECT `store_id` FROM `'.$this->tablePrefix.'core_store` WHERE `code` LIKE :code');
         $query->execute(array(':code' => $code));
         $query->setFetchMode(PDO::FETCH_ASSOC);
         $results = $query->fetch();
@@ -154,7 +156,7 @@ class Est_Handler_Magento_CoreConfigData extends Est_Handler_AbstractDatabase {
      */
     protected function getWebsiteIdFromCode($code) {
         $conn = $this->getDbConnection();
-        $query = $conn->prepare('SELECT `website_id` FROM `core_website` WHERE `code` LIKE :code');
+        $query = $conn->prepare('SELECT `website_id` FROM `'.$this->tablePrefix.'core_website` WHERE `code` LIKE :code');
         $query->execute(array(':code' => $code));
         $query->setFetchMode(PDO::FETCH_ASSOC);
         $results = $query->fetch();
@@ -184,6 +186,8 @@ class Est_Handler_Magento_CoreConfigData extends Est_Handler_AbstractDatabase {
 		if ($config === false) {
 			throw new Exception(sprintf('Could not load xml file "%s"', $localXmlFile));
 		}
+
+        $this->tablePrefix = (string)$config->global->resources->db->table_prefix;
 
 		return array(
 			'host' => (string)$config->global->resources->default_setup->connection->host,
