@@ -3,7 +3,7 @@ What is EnvSettingsTool?
 
 EnvSettingsTool offers a concept to adjust settings for applications.
 Typically it is used during deployment.
-The settings for every Eevironment can be maintained in an CSV file.
+The settings for every Environment can be maintained in an CSV file.
 
 CSV File
 --------
@@ -163,3 +163,9 @@ If you're setting Magento core_config_data values and you want to be sure that t
 | ---------------------------------- | ------- | ------ | ------------------ |----------- |
 | Est_Handler_Magento_CoreConfigData | %       | %      | dev/debug/profiler | --delete-- |
 | Est_Handler_Magento_CoreConfigData | default | 0      | dev/debug/profiler | 0          |
+
+## Changelog
+
+### Version 1.0.0
+
+* Added composer support
