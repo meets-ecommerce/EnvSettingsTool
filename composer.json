@@ -2,7 +2,6 @@
     "name":"aoemedia/envsettingstool",
     "description":"Environment Settings Tool",
     "minimum-stability":"dev",
-    "type":"composer-installer",
     "license":"GPL v3",
     "homepage":"https://github.com/AOEmedia/EnvSettingsTool",
     "authors":[
