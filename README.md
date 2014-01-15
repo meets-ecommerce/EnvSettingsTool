@@ -164,6 +164,21 @@ If you're setting Magento core_config_data values and you want to be sure that t
 | Est_Handler_Magento_CoreConfigData | %       | %      | dev/debug/profiler | --delete-- |
 | Est_Handler_Magento_CoreConfigData | default | 0      | dev/debug/profiler | 0          |
 
+### Use via Composer
+
+Add this to your composer.json to resolve the dependency through composer:
+::
+ "repositories": [
+ 		{
+ 			"type": "vcs",
+ 			"url": "https://github.com/AOEmedia/EnvSettingsTool"
+ 		}
+ 	],
+ "require": {
+		"aoepeople/envsettingstool": "~1.0"
+ }
+
+
 ## Changelog
 
 ### Version 1.0.0

@@ -1,12 +1,13 @@
 {
-    "name":"aoemedia/envsettingstool",
+    "name":"aoepeople/envsettingstool",
     "description":"Environment Settings Tool",
     "minimum-stability":"dev",
     "license":"GPL v3",
     "homepage":"https://github.com/AOEmedia/EnvSettingsTool",
     "authors":[
         {
-            "name":"Fabrizio Branca"
+            "name":"Fabrizio Branca",
+			"name":"Daniel Pötzinger"
         }
     ],
     "require":{
