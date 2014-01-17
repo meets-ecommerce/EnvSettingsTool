@@ -60,6 +60,9 @@ abstract class Est_Handler_Abstract implements Est_Handler_Interface {
 		}
 	}
 
+    /**
+     * @return mixed
+     */
     protected function _register() {
         // nothing happens here by default
     }
