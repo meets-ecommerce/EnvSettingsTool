@@ -3,11 +3,13 @@
     "description":"Environment Settings Tool",
     "minimum-stability":"dev",
     "license":"GPL v3",
-    "homepage":"https://github.com/AOEmedia/EnvSettingsTool",
+    "homepage":"https://github.com/AOEpeople/EnvSettingsTool",
     "authors":[
         {
-            "name":"Fabrizio Branca",
-			"name":"Daniel Pötzinger"
+            "name":"Fabrizio Branca"
+        },
+        {
+	    "name":"Daniel Pötzinger"
         }
     ],
     "require":{
