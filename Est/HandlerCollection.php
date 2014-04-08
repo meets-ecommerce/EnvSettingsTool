@@ -13,15 +13,17 @@ class Est_HandlerCollection implements Iterator {
 	protected $labels = array();
 
 
-	/**
-	 * Build from settings csv file
-	 *
-	 * @param $csvFile
-	 * @param $environment
-	 * @param string $defaultEnvironment
-	 * @throws Exception
-	 */
-	public function buildFromSettingsCSVFile($csvFile, $environment, $defaultEnvironment='DEFAULT') {
+    /**
+     * Build from settings csv file
+     *
+     * @param $csvFile
+     * @param $environment
+     * @param string $defaultEnvironment
+     * @param array $groups
+     * @param array $excludeGroups
+     * @throws Exception
+     */
+	public function buildFromSettingsCSVFile($csvFile, $environment, $defaultEnvironment='DEFAULT', $groups=array(), $excludeGroups=array()) {
 		if (!is_file($csvFile)) {
 			throw new Exception('SettingsFile is not present here: "'.$csvFile.'"');
 		}
@@ -34,6 +36,20 @@ class Est_HandlerCollection implements Iterator {
 		}
 
 		while ($row = fgetcsv($fh)) {
+
+            $rowGroups = $this->getGroupsForRow($row);
+
+            if (count($groups) && count(array_intersect($rowGroups, $groups)) == 0) {
+                // current row's group do not match given groups
+                continue;
+            }
+
+            if (count($excludeGroups) && count(array_intersect($excludeGroups, $groups)) > 0) {
+                // current row's group do match given exclude groups
+                continue;
+            }
+
+
 			$handlerClassname = trim($row[0]);
 
 			if (empty($handlerClassname) || $handlerClassname[0] == '#' || $handlerClassname[0] == '/') {
@@ -96,6 +112,17 @@ class Est_HandlerCollection implements Iterator {
 
 		}
 	}
+
+    /**
+     * Get tags for given row
+     *
+     * @param array $row
+     * @return array
+     */
+    protected function getGroupsForRow(array $row) {
+        $tagsColumnIndex = $this->getColumnIndexForEnvironment('GROUPS', true);
+        return $tagsColumnIndex ? Est_Div::trimExplode(',', $row[$tagsColumnIndex]) : array();
+    }
 
 	/**
 	 * Get column index for environment

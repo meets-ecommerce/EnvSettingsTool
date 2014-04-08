@@ -153,6 +153,25 @@ You can reference to values from another environment by adding this to the value
 * `###PARAM3###` will be replaced with the given param3. Also works if the parameter is given in the loop syntax `{{..|..}}`. Then the individual value will be set.
 
 
+## Groups
+
+The csv settings file can cotain another column labelled with "GROUPS" (all uppercase!). Every value in this column can be a comma separated list of groups (or 'tags' if you like)
+similar to how PHPUnit handles groups.
+
+When calling the apply.php script you can pass `--groups <comma-separated list of groups>` or `--exclude-groups <comma-separated list of groups>`.
+If `--groups` is set only the lines will be processed that have at least one of the groups passed as a parameter. If `--exclude-groups` is set the lines will be skipped if they
+have at least one group in common with what is specified.
+
+Please note that the argument does not support '=' but only spaces. (use `--groups db`, not `--groups=db`)
+
+Example:
+
+    # Will only execute rows tagged with 'db'
+    ./apply.php devbox ../Configuration/settings.csv --groups db
+
+    # Will skip executing rows tagged with 'db'
+    ./apply.php devbox ../Configuration/settings.csv --exclude-groups db
+
 ## Tips and tricks
 
 ### Delete values
@@ -184,3 +203,8 @@ Add this to your composer.json to resolve the dependency through composer:
 ### Version 1.0.0
 
 * Added composer support
+
+### Version 1.1.0
+
+* Added support for arguments
+* Added --groups and --exclude-groups feature

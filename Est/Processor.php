@@ -17,15 +17,24 @@ class Est_Processor {
 	 */
 	protected $handlerCollection;
 
+    /**
+     * @var array
+     */
+    protected $arguments = array();
 
-	/**
-	 * Constructor
-	 *
-	 * @param $environment
-	 * @param $settingsFilePath
-	 * @throws InvalidArgumentException
-	 */
-	public function __construct($environment, $settingsFilePath) {
+    protected $groups = array();
+    protected $excludedGroups = array();
+
+
+    /**
+     * Constructor
+     *
+     * @param $environment
+     * @param $settingsFilePath
+     * @param array $arguments
+     * @throws InvalidArgumentException
+     */
+	public function __construct($environment, $settingsFilePath, array $arguments=array()) {
 		if (empty($environment)) {
 			throw new InvalidArgumentException('No environment parameter set.');
 		}
@@ -38,6 +47,15 @@ class Est_Processor {
 
 		$this->environment = $environment;
 		$this->settingsFilePath = $settingsFilePath;
+        $this->arguments = $arguments;
+
+        if (isset($this->arguments['groups'])) {
+            $this->groups = Est_Div::trimExplode(',', $this->arguments['groups']);
+        }
+        if (isset($this->arguments['exclude-groups'])) {
+            $this->excludedGroups = Est_Div::trimExplode(',', $this->arguments['exclude-groups']);
+        }
+
 		$this->handlerCollection = new Est_HandlerCollection();
 	}
 
@@ -48,7 +66,13 @@ class Est_Processor {
 	 * @return bool
 	 */
 	public function apply() {
-		$this->handlerCollection->buildFromSettingsCSVFile($this->settingsFilePath,$this->environment);
+		$this->handlerCollection->buildFromSettingsCSVFile(
+            $this->settingsFilePath,
+            $this->environment,
+            'DEFAULT',
+            $this->groups,
+            $this->excludedGroups
+        );
 		foreach ($this->handlerCollection as $handler) { /* @var $handler Est_Handler_Abstract */
 			$res = $handler->apply();
 			if (!$res) {
@@ -95,6 +119,7 @@ class Est_Processor {
 	 * Print result
 	 */
 	public function printResults() {
+
 		$statistics = array();
 		foreach ($this->handlerCollection as $handler) { /* @var $handler Est_Handler_Abstract */
 			// Collecting some statistics
@@ -122,6 +147,19 @@ class Est_Processor {
 		foreach ($statistics as $status => $handlers) {
 			$this->output(sprintf("%s: %s handler(s)", $status, count($handlers)));
 		}
+
+        if (count($this->groups) || count($this->excludedGroups)) {
+            $this->output();
+            $this->output('Groups:');
+            $this->output(str_repeat('=', strlen(('Groups:'))));
+
+            if (count($this->groups)) {
+                $this->output('Groups: ' . implode(', ', $this->groups));
+            }
+            if (count($this->excludedGroups)) {
+                $this->output('Excluded groups: ' . implode(', ', $this->excludedGroups));
+            }
+        }
 
 	}
 
