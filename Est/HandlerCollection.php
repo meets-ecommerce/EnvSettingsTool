@@ -191,7 +191,7 @@ class Est_HandlerCollection implements Iterator {
         while (preg_match('/###VAR:([^#]*)###/', $value, $matches)) {
             $var = Est_VariableStorage::get($matches[1]);
             if ($var === false) {
-                throw new \Exception('Variable ' . $matches[1] . ' is not set');
+                throw new \Exception('Variable "' . $matches[1] . '" is not set');
             }
             $value = preg_replace('/###VAR:([^#]*)###/', $var, $value, 1);
         }

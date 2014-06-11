@@ -48,12 +48,17 @@ try {
 		$processor->printResults();
 	} catch (Exception $e) {
 		$processor->printResults();
-		echo PHP_EOL.PHP_EOL.PHP_EOL."ERROR: Stopping execution because an error has occured!".PHP_EOL;
-		echo "\tDetail:".$e->getMessage().$e->getTraceAsString().PHP_EOL.PHP_EOL;
+        echo "\n\n\n";
+        echo Est_CliOutput::getColoredString('ERROR: Stopping execution because an error has occured!', 'red') . "\n";
+        echo Est_CliOutput::getColoredString("Detail: {$e->getMessage()}", 'red') . "\n";
+        echo "Trace:\n{$e->getTraceAsString()}\n";
 		exit(1);
 	}
 
 } catch (Exception $e) {
-	echo "\nERROR: {$e->getMessage()}\n\n";
+    echo "\n" . Est_CliOutput::getColoredString("ERROR: {$e->getMessage()}", 'red') . "\n\n";
+	echo "\nERROR: {$e->getMessage()}\n";
 	exit(1);
 }
+
+echo "\n\n";
