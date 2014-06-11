@@ -34,4 +34,5 @@ class Est_VariableStorage {
     public static function get($name) {
         return isset(self::$storage[$name]) ? self::$storage[$name] : false;
     }
+
 }

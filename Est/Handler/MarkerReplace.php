@@ -13,63 +13,63 @@
  */
 class Est_Handler_MarkerReplace extends Est_Handler_Abstract {
 
-	/**
-	 * Apply
-	 *
-	 * @throws Exception
-	 * @return bool
-	 */
-	protected function _apply() {
+    /**
+     * Apply
+     *
+     * @throws Exception
+     * @return bool
+     */
+    protected function _apply() {
 
-		// let's use some speaking variable names... :)
-		$file = $this->param1;
-		$marker = $this->param2;
+        // let's use some speaking variable names... :)
+        $file = $this->param1;
+        $marker = $this->param2;
 
-		if (!is_file($file)) {
-			throw new Exception(sprintf('File "%s" does not exist', $file));
-		}
-		if (!is_writable($file)) {
-			throw new Exception(sprintf('File "%s" is not writeable', $file));
-		}
-		if (empty($marker)) {
-			throw new Exception('No marker defined');
-		}
-		if (!empty($this->param3)) {
-			throw new Exception('Param3 is not used in this handler and must be empty');
-		}
+        if (!is_file($file)) {
+            throw new Exception(sprintf('File "%s" does not exist', $file));
+        }
+        if (!is_writable($file)) {
+            throw new Exception(sprintf('File "%s" is not writeable', $file));
+        }
+        if (empty($marker)) {
+            throw new Exception('No marker defined');
+        }
+        if (!empty($this->param3)) {
+            throw new Exception('Param3 is not used in this handler and must be empty');
+        }
 
-		// read file
-		$fileContent = file_get_contents($file);
-		if ($fileContent === false) {
-			throw new Exception(sprintf('Error while reading file "%s"', $file));
-		}
-		$count = 0;
+        // read file
+        $fileContent = file_get_contents($file);
+        if ($fileContent === false) {
+            throw new Exception(sprintf('Error while reading file "%s"', $file));
+        }
+        $count = 0;
 
-		// do the replacement
-		$fileContent = str_replace($marker, $this->value, $fileContent, $count);
+        // do the replacement
+        $fileContent = str_replace($marker, $this->value, $fileContent, $count);
 
-		if ($count > 0) {
-			// write back to file
-			$res = file_put_contents($file, $fileContent);
-			if ($res === false) {
-				throw new Exception(sprintf('Error while writing file "%s"', $file));
-			}
+        if ($count > 0) {
+            // write back to file
+            $res = file_put_contents($file, $fileContent);
+            if ($res === false) {
+                throw new Exception(sprintf('Error while writing file "%s"', $file));
+            }
 
-			$this->addMessage(new Est_Message(
-				sprintf('Replaced %s occurence(s) of marker "%s" in file "%s" with value "%s"', $count, $marker, $file, $this->value),
-				Est_Message::OK
-			));
-			$this->setStatus(Est_Handler_Interface::STATUS_DONE);
-		} else {
-			$this->addMessage(new Est_Message(
-				sprintf('Could not find marker "%s" in file "%s"', $marker, $file),
-				Est_Message::WARNING
-			));
-			$this->setStatus(Est_Handler_Interface::STATUS_SUBJECTNOTFOUND);
-		}
+            $this->addMessage(new Est_Message(
+                sprintf('Replaced %s occurence(s) of marker "%s" in file "%s" with value "%s"', $count, $marker, $file, $this->value),
+                Est_Message::OK
+            ));
+            $this->setStatus(Est_Handler_Interface::STATUS_DONE);
+        } else {
+            $this->addMessage(new Est_Message(
+                sprintf('Could not find marker "%s" in file "%s"', $marker, $file),
+                Est_Message::WARNING
+            ));
+            $this->setStatus(Est_Handler_Interface::STATUS_SUBJECTNOTFOUND);
+        }
 
-		return true;
-	}
+        return true;
+    }
 
 
 }

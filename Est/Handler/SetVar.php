@@ -34,6 +34,4 @@ class Est_Handler_SetVar extends Est_Handler_Abstract {
         return true;
     }
 
-
-
 }
