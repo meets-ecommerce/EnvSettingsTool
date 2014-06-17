@@ -258,12 +258,46 @@ class XatafaceToCsvConverter
 
         if (count($restructuredSettings) > 0) {
             $columnHeaders = array_keys(current($restructuredSettings));
+            $indexOfDefaultValue = array_search('DEFAULT', $columnHeaders);
             fputcsv($fp, $columnHeaders);
             foreach ($restructuredSettings as $fields) {
-                fputcsv($fp, $fields);
+                fputcsv($fp, $this->determineAndSetDefaultValue($fields, $indexOfDefaultValue));
             }
         }
         fclose($fp);
+    }
+
+    /**
+     * Determines most occuring value, adds it as default and removes redundancies
+     *
+     * @param array $fields
+     * @param int $indexOfDefault
+     * @return array
+     */
+    private function determineAndSetDefaultValue($fields, $indexOfDefault)
+    {
+        $sliced         = array_slice($fields, $indexOfDefault);
+        $filteredSliced = array_filter($sliced, 'strlen');
+        $counted        = array_count_values(array_values($filteredSliced));
+
+        if (!empty($counted)) {
+            $mostOccuringValue = array_search(max($counted), $counted);
+            $fields['DEFAULT'] = $mostOccuringValue;
+            $counter = 0;
+
+            // clear values which are being set by default
+            foreach ($fields as $key => $value) {
+                if ($counter <= $indexOfDefault) {
+                    $counter++;
+                    continue;
+                }
+                if ($value == $mostOccuringValue) {
+                    $fields[$key] = '';
+                }
+            }
+        }
+
+        return $fields;
     }
 }
 
