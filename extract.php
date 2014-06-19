@@ -13,7 +13,7 @@ include(dirname(__FILE__).'/Est/Autoloading.php');
 try {
 
     if (empty($_SERVER['argv'][1])) {
-        throw new Exception('Please specify the environment');
+        throw new Exception('Please specify the handler');
     }
 
     if (getenv('NO_COLOR')) {
@@ -22,9 +22,9 @@ try {
 
     $handler = new $_SERVER['argv'][1](); /* @var $handler Est_Handler_Abstract */
 
-    $handler->setParam1($_SERVER['argv'][2]);
-    $handler->setParam2($_SERVER['argv'][3]);
-    $handler->setConfigKey($_SERVER['argv'][4]);
+    $handler->setConfigKey(isset($_SERVER['argv'][2]) ? $_SERVER['argv'][2] : '');
+    $handler->setParam1(isset($_SERVER['argv'][3]) ? $_SERVER['argv'][3] : 'default');
+    $handler->setParam2(isset($_SERVER['argv'][4]) ? $_SERVER['argv'][4] : '0');
 
     try {
         $handler->extractSettings();
