@@ -85,7 +85,11 @@ abstract class Est_Handler_Abstract implements Est_Handler_Interface {
      *
      * @return bool
      */
-    abstract protected function _extract();
+    protected function _extract()
+    {
+        echo 'No extract method implemented for this handler' . PHP_EOL;
+        return true;
+    }
 
     /**
      * @return mixed
