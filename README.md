@@ -148,6 +148,17 @@ Is equal to:
     Est_Handler_Magento_CoreConfigData('stores', '1', 'b_c') = 'http://www.foo.com'
     Est_Handler_Magento_CoreConfigData('stores', '1', 'b_d') = 'http://www.foo.com'
 
+Empty values in loops are also allowed:
+
+    Est_Handler_Magento_CoreConfigData('stores', '1', 'web/secure/base{{_skin|_media|_js|}}_url') = 'http://www.foo.com'
+
+Is equal to:
+
+    Est_Handler_Magento_CoreConfigData('stores', '1', 'web/secure/base_skin_url') = 'http://www.foo.com'
+    Est_Handler_Magento_CoreConfigData('stores', '1', 'web/secure/base_media_url') = 'http://www.foo.com'
+    Est_Handler_Magento_CoreConfigData('stores', '1', 'web/secure/base_js_url') = 'http://www.foo.com'
+    Est_Handler_Magento_CoreConfigData('stores', '1', 'web/secure/base_url') = 'http://www.foo.com'
+
 ### Fallback
 
 An empty cell falls back the configured DEFAULT column. If you actually need that value to be empty use `--empty--` instead.

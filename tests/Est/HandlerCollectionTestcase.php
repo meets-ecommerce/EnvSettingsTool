@@ -87,6 +87,36 @@ class Est_HandlerCollectionTestcase extends PHPUnit_Framework_TestCase {
     /**
      * @test
      */
+    public function canUseHandlersWithLoopWithEmptyValue() {
+        $handlerCollection = $this->getHandlerCollectionFromFixture('SettingsWithLoopWithEmptyValue.csv');
+
+        $handlers = array();
+        foreach ($handlerCollection as $handler) {
+            $handlers[] = $handler;
+        }
+
+        $this->assertCount(3, $handlers);
+
+        $this->assertEquals('default', $handlers[0]->getParam1());
+        $this->assertEquals('default', $handlers[1]->getParam1());
+        $this->assertEquals('default', $handlers[2]->getParam1());
+
+        $this->assertEquals('test_1', $handlers[0]->getParam2());
+        $this->assertEquals('test_2', $handlers[1]->getParam2());
+        $this->assertEquals('test_', $handlers[2]->getParam2());
+
+        $this->assertEquals('dev/debug/profiler', $handlers[0]->getParam3());
+        $this->assertEquals('dev/debug/profiler', $handlers[1]->getParam3());
+        $this->assertEquals('dev/debug/profiler', $handlers[2]->getParam3());
+
+        $this->assertEquals('test2', $handlers[0]->getValue());
+        $this->assertEquals('test2', $handlers[1]->getValue());
+        $this->assertEquals('test2', $handlers[2]->getValue());
+    }
+
+    /**
+     * @test
+     */
     public function canUseHandlersWithTwoLoopParams() {
         $handlerCollection = $this->getHandlerCollectionFromFixture('SettingsWithTwoLoops.csv');
 

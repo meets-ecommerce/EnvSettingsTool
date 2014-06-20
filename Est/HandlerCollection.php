@@ -73,7 +73,7 @@ class Est_HandlerCollection implements Iterator {
                     foreach ($values[$i] as $index => $originalValue) {
                         $matches = array();
                         if (preg_match('/{{(.*?)}}/', $originalValue, $matches)) {
-                            $tmp = Est_Div::trimExplode('|', $matches[1], true);
+                            $tmp = Est_Div::trimExplode('|', $matches[1], false);
                             unset($values[$i][$index]);
                             foreach ($tmp as $v) {
                                 $values[$i][] = preg_replace('/{{(.*?)}}/', $v, $originalValue, 1);
