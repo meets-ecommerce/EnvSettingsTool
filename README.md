@@ -137,6 +137,17 @@ Is equal to:
     Est_Handler_Magento_CoreConfigData('stores', '1', 'a/b/d') = 'http://www.foo.com'
     Est_Handler_Magento_CoreConfigData('stores', '1', 'a/b/e') = 'http://www.foo.com'
 
+Multiple loops are also support within the same parameter:
+
+    Est_Handler_Magento_CoreConfigData('stores', '1', '{{a|b}}_{{c|d}') = 'http://www.foo.com'
+
+Is equal to:
+
+    Est_Handler_Magento_CoreConfigData('stores', '1', 'a_c') = 'http://www.foo.com'
+    Est_Handler_Magento_CoreConfigData('stores', '1', 'a_d') = 'http://www.foo.com'
+    Est_Handler_Magento_CoreConfigData('stores', '1', 'b_c') = 'http://www.foo.com'
+    Est_Handler_Magento_CoreConfigData('stores', '1', 'b_d') = 'http://www.foo.com'
+
 ### Fallback
 
 An empty cell falls back the configured DEFAULT column. If you actually need that value to be empty use `--empty--` instead.

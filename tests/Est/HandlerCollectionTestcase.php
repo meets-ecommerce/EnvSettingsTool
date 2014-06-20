@@ -121,6 +121,40 @@ class Est_HandlerCollectionTestcase extends PHPUnit_Framework_TestCase {
     /**
      * @test
      */
+    public function canUseHandlersWithTwoLoopParamsInTheSameParameter() {
+        $handlerCollection = $this->getHandlerCollectionFromFixture('SettingsWithTwoLoopsInTheSameParameter.csv');
+
+        $handlers = array();
+        foreach ($handlerCollection as $handler) {
+            $handlers[] = $handler;
+        }
+
+        $this->assertCount(4, $handlers);
+
+        $this->assertEquals('test_store_a', $handlers[0]->getParam1());
+        $this->assertEquals('test_store_b', $handlers[1]->getParam1());
+        $this->assertEquals('test_website_a', $handlers[2]->getParam1());
+        $this->assertEquals('test_website_b', $handlers[3]->getParam1());
+
+        $this->assertEquals('1', $handlers[0]->getParam2());
+        $this->assertEquals('1', $handlers[1]->getParam2());
+        $this->assertEquals('1', $handlers[2]->getParam2());
+        $this->assertEquals('1', $handlers[3]->getParam2());
+
+        $this->assertEquals('dev/debug/profiler', $handlers[0]->getParam3());
+        $this->assertEquals('dev/debug/profiler', $handlers[1]->getParam3());
+        $this->assertEquals('dev/debug/profiler', $handlers[2]->getParam3());
+        $this->assertEquals('dev/debug/profiler', $handlers[3]->getParam3());
+
+        $this->assertEquals('test2', $handlers[0]->getValue());
+        $this->assertEquals('test2', $handlers[1]->getValue());
+        $this->assertEquals('test2', $handlers[2]->getValue());
+        $this->assertEquals('test2', $handlers[3]->getValue());
+    }
+
+    /**
+     * @test
+     */
     public function canUseReferencesToOtherColumns() {
         $handlerCollection = $this->getHandlerCollectionFromFixture('SettingsWithReferences.csv', 'environment_b');
 
@@ -174,13 +208,20 @@ class Est_HandlerCollectionTestcase extends PHPUnit_Framework_TestCase {
             $handlers[] = $handler;
         }
 
-        $this->assertCount(7, $handlers);
+        $this->assertCount(6, $handlers);
 
-        $this->assertEquals('', $handlers[0]->getValue());
-        $this->assertEquals('value2', $handlers[3]->getValue());
-        $this->assertEquals('value1', $handlers[4]->getValue());
-        $this->assertEquals('inline-value1-usage', $handlers[5]->getValue());
-        $this->assertEquals('value1', $handlers[6]->getValue());
+        $this->assertEquals('value2', $handlers[2]->getValue());
+        $this->assertEquals('value1', $handlers[3]->getValue());
+        $this->assertEquals('inline-value1-usage', $handlers[4]->getValue());
+        $this->assertEquals('value1', $handlers[5]->getValue());
+    }
+
+    /**
+     * @test
+     */
+    public function settingsWithVariableNotSet() {
+        $this->setExpectedException('Exception', 'Variable "notset" is not set');
+        $handlerCollection = $this->getHandlerCollectionFromFixture('SettingsWithVariablesNotSet.csv');
     }
 
     /**
