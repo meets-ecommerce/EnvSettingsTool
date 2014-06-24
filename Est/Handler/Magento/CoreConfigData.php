@@ -108,23 +108,20 @@ class Est_Handler_Magento_CoreConfigData extends Est_Handler_AbstractDatabase {
 
         $conn = $this->getDbConnection();
 
-        $query = $conn->prepare('SELECT * FROM `'.$this->tablePrefix.'core_config_data` WHERE `scope` LIKE :scope AND `scope_id` LIKE :scopeId AND `path` LIKE :path');
+        $query = $conn->prepare('SELECT scope, scope_id, path, value FROM `'.$this->tablePrefix.'core_config_data` WHERE `scope` LIKE :scope AND `scope_id` LIKE :scopeId AND `path` LIKE :path');
         $query->execute($sqlParameters);
 
         $query->setFetchMode(PDO::FETCH_ASSOC);
         $rows = $query->fetchAll();
 
-        $output = '';
+        $buffer = fopen('php://temp', 'r+');
         foreach ($rows as $row) {
-            $output .= sprintf(
-                "%s,%s,%s,%s,%s\n",
-                __CLASS__,
-                $row['scope'],
-                $row['scope_id'],
-                $row['path'],
-                $row['value']
-            );
+            array_unshift($row, __CLASS__);
+            fputcsv($buffer, $row);
         }
+        rewind($buffer);
+        $output = fgets($buffer);
+        fclose($buffer);
 
         return $output;
     }
