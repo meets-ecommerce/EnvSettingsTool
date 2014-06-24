@@ -16,15 +16,24 @@ try {
         throw new Exception('Please specify the handler');
     }
 
+    if (count($_SERVER['argv']) != 5) {
+        echo "Example: php extract.php Est_Handler_Magento_CoreConfigData default '0' 'web/secure/%'\n";
+        exit(1);
+    }
+
     if (getenv('NO_COLOR')) {
         Est_CliOutput::$active = false;
     }
 
-    $handler = new $_SERVER['argv'][1](); /* @var $handler Est_Handler_Abstract */
+    $handlerClassname = $_SERVER['argv'][1];
+    $handler = new $handlerClassname(); /* @var $handler Est_Handler_Abstract */
+    if (!$handler instanceof Est_Handler_Abstract) {
+        throw new Exception(sprintf('Handler of class "%s" is not an instance of Est_Handler_Abstract', $handlerClassname));
+    }
 
-    $handler->setConfigKey(isset($_SERVER['argv'][2]) ? $_SERVER['argv'][2] : '');
-    $handler->setParam1(isset($_SERVER['argv'][3]) ? $_SERVER['argv'][3] : 'default');
-    $handler->setParam2(isset($_SERVER['argv'][4]) ? $_SERVER['argv'][4] : '0');
+    $handler->setParam1($_SERVER['argv'][2]);
+    $handler->setParam2($_SERVER['argv'][3]);
+    $handler->setParam3($_SERVER['argv'][4]);
 
     try {
         $handler->extractSettings();

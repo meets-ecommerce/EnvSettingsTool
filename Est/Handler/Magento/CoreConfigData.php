@@ -102,7 +102,8 @@ class Est_Handler_Magento_CoreConfigData extends Est_Handler_AbstractDatabase {
 
         $scope = $this->param1;
         $scopeId = $this->param2;
-        $path = '%' . $this->configKey . '%';
+        $path = $this->param3;
+
         $sqlParameters = $this->getSqlParameters($scope, $scopeId, $path);
 
         $conn = $this->getDbConnection();
@@ -116,7 +117,7 @@ class Est_Handler_Magento_CoreConfigData extends Est_Handler_AbstractDatabase {
         $output = '';
         foreach ($rows as $row) {
             $output .= sprintf(
-                "%s,%s,%s,%s,%s,,,,,,\n",
+                "%s,%s,%s,%s,%s\n",
                 __CLASS__,
                 $row['scope'],
                 $row['scope_id'],
