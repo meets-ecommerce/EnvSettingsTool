@@ -28,6 +28,12 @@ class Est_Handler_Magento_CoreConfigData extends Est_Handler_AbstractDatabase {
 
         $conn = $this->getDbConnection();
 
+        // Testing if the table exists
+        $result = $conn->query('SELECT 1 FROM `'.$this->tablePrefix.'core_config_data` LIMIT 1');
+        if ($result === false) {
+            throw new Exception('Table '.$this->tablePrefix.'core_config_data doesn\'t exist');
+        }
+
         if (strtolower(trim($this->value)) == '--delete--') {
             $query = $conn->prepare('DELETE FROM `'.$this->tablePrefix.'core_config_data` WHERE `scope` LIKE :scope AND `scope_id` LIKE :scopeId AND `path` LIKE :path');
             $res = $query->execute($sqlParameters);
@@ -68,7 +74,7 @@ class Est_Handler_Magento_CoreConfigData extends Est_Handler_AbstractDatabase {
 
                 if ($res === false) {
                     // TODO: include speaking error message
-                    // var_dump( $conn->errorInfo());
+                    // var_dump($conn->errorInfo());
                     throw new Exception('Error while updating value');
                 }
 
