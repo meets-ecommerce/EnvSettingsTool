@@ -96,6 +96,8 @@ class Est_Handler_Magento_CoreConfigData extends Est_Handler_AbstractDatabase {
             }
         }
 
+        $this->destroyDb();
+
         return true;
     }
 
