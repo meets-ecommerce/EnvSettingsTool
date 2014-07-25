@@ -31,7 +31,6 @@ class Est_Handler_Magento_CoreConfigData extends Est_Handler_Magento_AbstractDat
         if (strtolower(trim($this->value)) == '--delete--') {
             $action = self::ACTION_DELETE;
         } else {
-            $sqlParameters[':value'] = $this->value;
             $query = 'SELECT `value` FROM `' . $this->_tablePrefix . 'core_config_data` WHERE `scope` LIKE :scope AND `scope_id` LIKE :scopeId AND `path` LIKE :path';
             $firstRow = $this->_getFirstRow($query, $sqlParameters);
 
