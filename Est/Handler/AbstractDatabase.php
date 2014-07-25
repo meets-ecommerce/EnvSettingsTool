@@ -24,7 +24,7 @@ abstract class Est_Handler_AbstractDatabase extends Est_Handler_Abstract {
      *
      * @return array
      */
-    abstract protected function getDatabaseConnectionParameters();
+    abstract protected function _getDatabaseConnectionParameters();
 
     /**
      * Get database connection
@@ -34,7 +34,7 @@ abstract class Est_Handler_AbstractDatabase extends Est_Handler_Abstract {
      */
     protected function getDbConnection() {
         if (is_null($this->dbConnection)) {
-            $dbParameters = $this->getDatabaseConnectionParameters();
+            $dbParameters = $this->_getDatabaseConnectionParameters();
             if (!is_array($dbParameters)) {
                 throw new Exception('No valid database connection parameters found');
             }
