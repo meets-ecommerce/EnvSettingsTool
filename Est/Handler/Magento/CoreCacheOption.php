@@ -24,13 +24,13 @@ class Est_Handler_Magento_CoreCacheOption extends Est_Handler_Magento_AbstractDa
         $code          = trim($this->param1);
         $sqlParameters = $this->_getSqlParameters($code);
 
-        $sqlParameters[':value'] = $this->value;
         $query                   = 'SELECT `value` FROM `' . $this->_tablePrefix . 'core_cache_option` WHERE `code` = :code';
         $firstRow                = $this->_getFirstRow($query, $sqlParameters);
+        $sqlParameters[':value'] = $this->value;
 
         if ($firstRow === false) {
             $this->addMessage(
-                new Est_Message(sprintf('No rows with code = "%s" found, query "%s', $code, $query), Est_Message::SKIPPED)
+                new Est_Message(sprintf('No rows with code = "%s" found', $code), Est_Message::SKIPPED)
             );
         } elseif ($firstRow['value'] == $this->value) {
             $this->addMessage(
