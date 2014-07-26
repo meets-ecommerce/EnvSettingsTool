@@ -30,7 +30,7 @@ class Est_Handler_Magento_CoreCacheOption extends Est_Handler_Magento_AbstractDa
 
         if ($firstRow === false) {
             $this->addMessage(
-                new Est_Message(sprintf('No rows with code = "%s" found', $code), Est_Message::SKIPPED)
+                new Est_Message(sprintf('No rows with code = "%s" found, query "%s', $code, $query), Est_Message::SKIPPED)
             );
         } elseif ($firstRow['value'] == $this->value) {
             $this->addMessage(
