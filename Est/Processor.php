@@ -17,15 +17,26 @@ class Est_Processor {
      */
     protected $handlerCollection;
 
+    /**
+     * @var array
+     */
+    protected $groups = array();
+
+    /**
+     * @var array
+     */
+    protected $excludeGroups = array();
+
 
     /**
      * Constructor
      *
      * @param $environment
      * @param $settingsFilePath
+     * @param array $options
      * @throws InvalidArgumentException
      */
-    public function __construct($environment, $settingsFilePath) {
+    public function __construct($environment, $settingsFilePath, array $options=array()) {
         if (empty($environment)) {
             throw new InvalidArgumentException('No environment parameter set.');
         }
@@ -39,6 +50,13 @@ class Est_Processor {
         $this->environment = $environment;
         $this->settingsFilePath = $settingsFilePath;
         $this->handlerCollection = new Est_HandlerCollection();
+
+        if (isset($options['groups'])) {
+            $this->groups = Est_Div::trimExplode(',', $options['groups'], true);
+        }
+        if (isset($options['excludeGroups'])) {
+            $this->excludeGroups = Est_Div::trimExplode(',', $options['excludeGroups'], true);
+        }
     }
 
     /**
@@ -48,7 +66,7 @@ class Est_Processor {
      * @return bool
      */
     public function apply() {
-        $this->handlerCollection->buildFromSettingsCSVFile($this->settingsFilePath,$this->environment);
+        $this->handlerCollection->buildFromSettingsCSVFile($this->settingsFilePath, $this->environment, 'DEFAULT', $this->groups, $this->excludeGroups);
         foreach ($this->handlerCollection as $handler) { /* @var $handler Est_Handler_Abstract */
             $res = $handler->apply();
             if (!$res) {
@@ -65,7 +83,7 @@ class Est_Processor {
      * @return bool
      */
     public function dryRun() {
-        $this->handlerCollection->buildFromSettingsCSVFile($this->settingsFilePath,$this->environment);
+        $this->handlerCollection->buildFromSettingsCSVFile($this->settingsFilePath, $this->environment, 'DEFAULT', $this->groups, $this->excludeGroups);
         foreach ($this->handlerCollection as $handler) { /* @var $handler Est_Handler_Abstract */
             $this->output($handler->getLabel());
         }
@@ -75,11 +93,12 @@ class Est_Processor {
     /**
      * Get value
      *
-     * @param $handler
+     * @param $handlerClassName
      * @param $param1
      * @param $param2
      * @param $param3
      * @throws Exception
+     * @internal param $handler
      * @return Est_Handler_Abstract
      */
     public function getHandler($handlerClassName, $param1, $param2, $param3) {
@@ -121,6 +140,14 @@ class Est_Processor {
 
         foreach ($statistics as $status => $handlers) {
             $this->output(sprintf("%s: %s handler(s)", $status, count($handlers)));
+        }
+
+        $this->output();
+        if (count($this->groups)) {
+            $this->output('Groups: ' . implode(', ', $this->groups));
+        }
+        if (count($this->excludeGroups)) {
+            $this->output('Excluded groups: ' . implode(', ', $this->excludeGroups));
         }
 
     }

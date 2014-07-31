@@ -23,7 +23,7 @@ class Est_HandlerCollection implements Iterator {
      * @param array $excludeGroups
      * @throws Exception
      */
-    public function buildFromSettingsCSVFile($csvFile, $environment, $defaultEnvironment='DEFAULT', $groups=array(), $excludeGroups=array()) {
+    public function buildFromSettingsCSVFile($csvFile, $environment, $defaultEnvironment='DEFAULT', array $groups=array(), array $excludeGroups=array()) {
         if (!is_file($csvFile)) {
             throw new Exception('SettingsFile is not present here: "'.$csvFile.'"');
         }
