@@ -156,7 +156,7 @@ abstract class Est_Handler_Magento_AbstractDatabase extends Est_Handler_Abstract
             fputcsv($buffer, $row);
         }
         rewind($buffer);
-        $output = fgets($buffer);
+        $output = stream_get_contents($buffer);
         fclose($buffer);
 
         return $output;
