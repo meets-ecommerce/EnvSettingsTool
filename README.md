@@ -86,16 +86,23 @@ Example
 
 * **Est_Handler_PrependFileContent**: Prepends the content from one file to the content of another file
 
-    * Param1: contentFile path
-    * Param2: targetFile path
+    * Param1: targetFile path
+    * Param2: not used
     * Param3: not used
-
+    * Value: contentFile path
 
 * **Est_Handler_SetVar**: Allows you to set variables that can be used in all following handlers using `###VAR:<variableName>###`
 
     * Param1: variable name
     * Param2: not used
     * Param3: not used
+
+* **Est_Handler_CopyFile**: Allows you to set variables that can be used in all following handlers using `###VAR:<variableName>###`
+
+    * Param1: targetFile path
+    * Param2: not used
+    * Param3: not used
+    * Value: sourceFile path
 
 
 ## Special Features
