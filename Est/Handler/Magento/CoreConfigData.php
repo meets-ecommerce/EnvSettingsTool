@@ -76,6 +76,8 @@ class Est_Handler_Magento_CoreConfigData extends Est_Handler_Magento_AbstractDat
                 break;
         }
 
+        $this->destroyDb();
+
         return true;
     }
 
