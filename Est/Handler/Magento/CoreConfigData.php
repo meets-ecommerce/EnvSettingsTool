@@ -126,6 +126,10 @@ class Est_Handler_Magento_CoreConfigData extends Est_Handler_Magento_AbstractDat
             throw new Exception("Scope must be 'default', 'stores', 'websites', or '%'");
         }
 
+        if ($scope == 'default') {
+            $scopeId = 0;
+        }
+
         if ($scope == 'stores' && !is_numeric($scopeId)) {
             // do a store code lookup
             $code    = $scopeId;
