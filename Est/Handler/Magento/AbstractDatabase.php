@@ -230,7 +230,6 @@ abstract class Est_Handler_Magento_AbstractDatabase extends Est_Handler_Abstract
      * @param array $sqlParameters
      * @param string $oldValue
      * @throws Exception
-     * @internal param array $firstRow
      */
     protected function _processUpdate($query, array $sqlParameters, $oldValue)
     {
