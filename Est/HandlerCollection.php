@@ -202,6 +202,15 @@ class Est_HandlerCollection implements Iterator {
             $value = preg_replace('/###VAR:([^#]*)###/', $var, $value, 1);
         }
 
+        while (preg_match('/###FILE:([^#]*)###/', $value, $matches)) {
+            $fileName = $matches[1];
+            if (!file_exists($fileName)) {
+                throw new \Exception('File "' . $fileName . '" does not exist');
+            }
+            $content = trim(file_get_contents($fileName));
+            $value = preg_replace('/###FILE:([^#]*)###/', $content, $value, 1);
+        }
+
         return $this->replaceWithEnvironmentVariables($value);
     }
 

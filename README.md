@@ -119,6 +119,16 @@ If the value field of a row for the current environment is `--skip--` this handl
 
 The Values also support the special syntax `###ENV:VARIABLE###` to read stuff from the (bash) environment Variables.
 
+### Reading file content
+
+The special syntax `###FILE:filename###` allows to read the content of a file and insert the trimmed value.
+
+Example:
+
+    Est_Handler_XmlFile('app/etc/local.xml', '/config/global/cache/id_prefix', '') = x###FILE:../build.txt###_
+    
+Will read the content of ../build.txt and insert it in the id_prefix node: x72_
+
 ### Loops
 
 param1, param2 and param3 can specify loops using this syntax: `{{1|2|3}}`. In this case the same handler will be executed multiple times using every values.
