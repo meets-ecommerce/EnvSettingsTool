@@ -187,6 +187,7 @@ You can reference to values from another environment by adding this to the value
 ### Special markers
 
 * `###ENVIRONMENT###` will be replaced with current environment name (e.g. "production"). This replacement is done after resolving any references to other environments. So the environment being inserted here is always the actual environment requested and not the one of a referenced value.
+* `###CWD###` will be replaced with the path to the current working directory.
 * `###PARAM1###` will be replaced with the given param1. Also works if the parameter is given in the loop syntax `{{..|..}}`. Then the individual value will be set.
 * `###PARAM2###` will be replaced with the given param2. Also works if the parameter is given in the loop syntax `{{..|..}}`. Then the individual value will be set.
 * `###PARAM3###` will be replaced with the given param3. Also works if the parameter is given in the loop syntax `{{..|..}}`. Then the individual value will be set.

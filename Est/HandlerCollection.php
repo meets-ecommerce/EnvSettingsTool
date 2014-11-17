@@ -187,6 +187,7 @@ class Est_HandlerCollection implements Iterator {
         }
 
         $value = str_replace('###ENVIRONMENT###', $environment, $value);
+        $value = str_replace('###CWD###', getcwd(), $value);
 
         if (!is_null($handler)) {
             $value = str_replace('###PARAM1###', $handler->getParam1(), $value);
