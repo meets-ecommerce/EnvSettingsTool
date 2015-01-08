@@ -38,7 +38,7 @@ abstract class Est_Handler_AbstractDatabase extends Est_Handler_Abstract {
             if (!is_array($dbParameters)) {
                 throw new Exception('No valid database connection parameters found');
             }
-            foreach (array('host', 'database', 'username', 'password') as $key) {
+            foreach (array('host', 'database', 'username' /*, 'password' */) as $key) {
                 if (!isset($dbParameters[$key]) || empty($dbParameters[$key])) {
                     throw new Exception(sprintf('No "%s" found in database connection parameters', $key));
                 }

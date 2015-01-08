@@ -34,24 +34,36 @@ abstract class Est_Handler_Magento_AbstractDatabase extends Est_Handler_Abstract
     protected function _getDatabaseConnectionParameters()
     {
         $localXmlFile = 'app/etc/local.xml';
+        $configPhpFile = 'app/etc/config.php';
 
-        if (!is_file($localXmlFile)) {
-            throw new Exception(sprintf('File "%s" not found', $localXmlFile));
+        if (is_file($localXmlFile)) {
+            $config = simplexml_load_file($localXmlFile);
+            if ($config === false) {
+                throw new Exception(sprintf('Could not load xml file "%s"', $localXmlFile));
+            }
+
+            $this->tablePrefix = (string)$config->global->resources->db->table_prefix;
+
+            return array(
+                'host' => (string)$config->global->resources->default_setup->connection->host,
+                'database' => (string)$config->global->resources->default_setup->connection->dbname,
+                'username' => (string)$config->global->resources->default_setup->connection->username,
+                'password' => (string)$config->global->resources->default_setup->connection->password
+            );
+        } elseif (is_file($configPhpFile)) {
+            $config = include($configPhpFile);
+            if (!is_array($config)) {
+                throw new Exception(sprintf('Could not load php file "%s"', $configPhpFile));
+            }
+            return array(
+                'host' => $config['db']['connection']['default']['host'],
+                'database' => $config['db']['connection']['default']['dbname'],
+                'username' => $config['db']['connection']['default']['username'],
+                'password' => $config['db']['connection']['default']['password']
+            );
         }
 
-        $config = simplexml_load_file($localXmlFile);
-        if ($config === false) {
-            throw new Exception(sprintf('Could not load xml file "%s"', $localXmlFile));
-        }
-
-        $this->_tablePrefix = (string) $config->global->resources->db->table_prefix;
-
-        return array(
-            'host'     => (string) $config->global->resources->default_setup->connection->host,
-            'database' => (string) $config->global->resources->default_setup->connection->dbname,
-            'username' => (string) $config->global->resources->default_setup->connection->username,
-            'password' => (string) $config->global->resources->default_setup->connection->password
-        );
+        throw new Exception('No valid configuration found.');
     }
 
     /**
