@@ -127,6 +127,9 @@ class Est_HandlerCollection implements Iterator {
      */
     protected function getGroupsForRow(array $row) {
         $tagsColumnIndex = $this->getColumnIndexForEnvironment('GROUPS', true);
+        if (!isset($row[$tagsColumnIndex])) {
+            return array();
+        }
         return $tagsColumnIndex ? Est_Div::trimExplode(',', $row[$tagsColumnIndex]) : array();
     }
 
