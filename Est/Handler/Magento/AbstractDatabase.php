@@ -156,7 +156,7 @@ abstract class Est_Handler_Magento_AbstractDatabase extends Est_Handler_Abstract
 
         $result = end($result);
 
-        return $result['entity_type_id'];
+        return $result;
     }
 
     /**
