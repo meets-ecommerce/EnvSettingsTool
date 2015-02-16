@@ -127,9 +127,6 @@ class Est_HandlerCollection implements Iterator {
      */
     protected function getGroupsForRow(array $row) {
         $tagsColumnIndex = $this->getColumnIndexForEnvironment('GROUPS', true);
-        if (!isset($row[$tagsColumnIndex])) {
-            return array();
-        }
         return $tagsColumnIndex ? Est_Div::trimExplode(',', $row[$tagsColumnIndex]) : array();
     }
 
@@ -247,7 +244,7 @@ class Est_HandlerCollection implements Iterator {
     public function addHandler(Est_Handler_Interface $handler) {
         $hash = $this->getHandlerHash($handler);
         if (isset($this->handlers[$hash])) {
-            throw new Exception('Handler with this specification already exist. Cannot add: ' . $handler->getLabel());
+            throw new Exception('Handler with this specification already exists. Cannot add: ' . $handler->getLabel());
         }
         $this->handlers[$hash] = $handler;
     }
