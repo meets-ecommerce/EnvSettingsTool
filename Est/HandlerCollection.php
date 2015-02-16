@@ -186,9 +186,6 @@ class Est_HandlerCollection implements Iterator {
             }
         }
 
-        $value = str_replace('###ENVIRONMENT###', $environment, $value);
-        $value = str_replace('###CWD###', getcwd(), $value);
-
         if (!is_null($handler)) {
             $value = str_replace('###PARAM1###', $handler->getParam1(), $value);
             $value = str_replace('###PARAM2###', $handler->getParam2(), $value);
@@ -211,6 +208,9 @@ class Est_HandlerCollection implements Iterator {
             $content = trim(file_get_contents($fileName));
             $value = preg_replace('/###FILE:([^#]*)###/', $content, $value, 1);
         }
+
+        $value = str_replace('###ENVIRONMENT###', $environment, $value);
+        $value = str_replace('###CWD###', getcwd(), $value);
 
         return $this->replaceWithEnvironmentVariables($value);
     }
