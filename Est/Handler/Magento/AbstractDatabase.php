@@ -129,8 +129,7 @@ abstract class Est_Handler_Magento_AbstractDatabase extends Est_Handler_Abstract
             throw new Exception("Found more than once website for code '$code'");
         }
         $result = end($results);
-
-        return $result['website_id'];
+        return $result;
     }
 
     /**
