@@ -186,9 +186,6 @@ class Est_HandlerCollection implements Iterator {
             }
         }
 
-        $value = str_replace('###ENVIRONMENT###', $environment, $value);
-        $value = str_replace('###CWD###', getcwd(), $value);
-
         if (!is_null($handler)) {
             $value = str_replace('###PARAM1###', $handler->getParam1(), $value);
             $value = str_replace('###PARAM2###', $handler->getParam2(), $value);
@@ -211,6 +208,9 @@ class Est_HandlerCollection implements Iterator {
             $content = trim(file_get_contents($fileName));
             $value = preg_replace('/###FILE:([^#]*)###/', $content, $value, 1);
         }
+
+        $value = str_replace('###ENVIRONMENT###', $environment, $value);
+        $value = str_replace('###CWD###', getcwd(), $value);
 
         return $this->replaceWithEnvironmentVariables($value);
     }
@@ -244,7 +244,7 @@ class Est_HandlerCollection implements Iterator {
     public function addHandler(Est_Handler_Interface $handler) {
         $hash = $this->getHandlerHash($handler);
         if (isset($this->handlers[$hash])) {
-            throw new Exception('Handler with this specification already exist. Cannot add: ' . $handler->getLabel());
+            throw new Exception('Handler with this specification already exists. Cannot add: ' . $handler->getLabel());
         }
         $this->handlers[$hash] = $handler;
     }

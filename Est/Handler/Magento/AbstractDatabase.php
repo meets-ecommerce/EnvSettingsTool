@@ -133,6 +133,32 @@ abstract class Est_Handler_Magento_AbstractDatabase extends Est_Handler_Abstract
     }
 
     /**
+     * Fetch entity type id by a given entity type code
+     *
+     * @param string $code Entity type code
+     * @return mixed
+     * @throws Exception
+     */
+    protected function _getEntityTypeFromCode($code)
+    {
+        $query = $this->getDbConnection()
+            ->prepare('SELECT `entity_type_id` FROM `' . $this->_tablePrefix . 'eav_entity_type` WHERE `entity_type_code` = :code');
+        $query->execute(array('code' => $code));
+        $query->setFetchMode(PDO::FETCH_ASSOC);
+
+        $result = $query->fetch();
+        if (!$result || 0 == count($result)) {
+            throw new Exception("Could not find an entity type with code '$code'");
+        } else if (1 < count($result)) {
+            throw new Exception("Found more than one entity type with code '$code'");
+        }
+
+        $result = end($result);
+
+        return $result;
+    }
+
+    /**
      * @param string $table
      * @throws Exception
      */

@@ -103,6 +103,12 @@ Example
     * Param2: not used
     * Param3: not used
     * Value: sourceFile path
+    
+* **Est_Handler_Magento_EavEntityStore**: Sets a predefined increment prefix. The last increment id will be set to <store-id><prefix>00000000.
+
+    * Param1: entity type code or entity type id
+    * Param2: store code or store id
+    * Param3: increment prefix
 
 
 ## Special Features
@@ -226,16 +232,18 @@ If you're setting Magento core_config_data values and you want to be sure that t
 ### Use via Composer
 
 Add this to your composer.json to resolve the dependency through composer:
-::
- "repositories": [
+
+
+
+ 	"repositories": [
  		{
  			"type": "vcs",
- 			"url": "https://github.com/AOEmedia/EnvSettingsTool"
+ 			"url": "https://github.com/AOEpeople/EnvSettingsTool"
  		}
  	],
- "require": {
+ 	"require": {
 		"aoepeople/envsettingstool": "~1.0"
- }
+ 	}
 
 
 ## Changelog
