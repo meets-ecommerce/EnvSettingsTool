@@ -110,6 +110,13 @@ Example
     * Param2: store code or store id
     * Param3: increment prefix
 
+* **Est_Handler_Magento_AdminUserActivate**: Allows to enabled/disabled admin user accounts based on username, email or roles (wildcards supported)
+
+    * Param1: Username
+    * Param2: Email
+    * Param3: Rolename
+    * Value: 1=enabled, 0=disabled
+    
 
 ## Special Features
 
@@ -220,6 +227,30 @@ Example:
 
 ## Tips and tricks
 
+### Admin user management
+
+Disable all admin users:
+
+    Est_Handler_Magento_AdminUserActivate('%', '%', '%') = 0
+    
+Enable user 'john.doe':
+
+    Est_Handler_Magento_AdminUserActivate('john.doe', '%', '%') = 1
+    
+Enable user with email address 'info@example.com':
+
+    Est_Handler_Magento_AdminUserActivate('%', 'info@example.com', '%') = 1
+    
+Enable all user with email addresses '...@example.com':
+    
+    Est_Handler_Magento_AdminUserActivate('%', '%@example.com', '%') = 1
+    
+Enable all users with role 'Customer Service':    
+
+    Est_Handler_Magento_AdminUserActivate('%', '%', 'Customer Service') = 1
+
+Remember that EnvSettingsTool processes the csv file from top to bottom. You can use this to add exact control over what accounts should be enabled or not.
+
 ### Delete values
 
 If you're setting Magento core_config_data values and you want to be sure that there's no other value that might interfere with your values (e.g. in a different scope) you can delete all values first:
@@ -233,17 +264,15 @@ If you're setting Magento core_config_data values and you want to be sure that t
 
 Add this to your composer.json to resolve the dependency through composer:
 
-
-
- 	"repositories": [
- 		{
- 			"type": "vcs",
- 			"url": "https://github.com/AOEpeople/EnvSettingsTool"
- 		}
- 	],
- 	"require": {
-		"aoepeople/envsettingstool": "~1.0"
- 	}
+    "repositories": [
+        {
+            "type": "vcs",
+            "url": "https://github.com/AOEpeople/EnvSettingsTool"
+        }
+    ],
+    "require": {
+        "aoepeople/envsettingstool": "~1.0"
+    }
 
 
 ## Changelog
@@ -256,3 +285,7 @@ Add this to your composer.json to resolve the dependency through composer:
 
 * Added support for arguments
 * Added --groups and --exclude-groups feature
+
+### Version 1.2.0
+
+* Added support for Magento admin users

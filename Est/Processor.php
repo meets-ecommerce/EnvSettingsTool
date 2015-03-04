@@ -70,7 +70,7 @@ class Est_Processor {
         foreach ($this->handlerCollection as $handler) { /* @var $handler Est_Handler_Abstract */
             $res = $handler->apply();
             if (!$res) {
-                throw new Exception('An error in handler'.$handler->getLabel());
+                throw new Exception('Error in handler: ' . $handler->getLabel());
             }
         }
         return true;

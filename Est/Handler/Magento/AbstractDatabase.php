@@ -1,13 +1,14 @@
 <?php
 
 /**
- * Abstract magento database handler class
+ * Abstract Magento database handler class
  *
  * @author Dmytro Zavalkin <dmytro.zavalkin@aoe.com>
+ * @author Fabrizio Branca
  */
 abstract class Est_Handler_Magento_AbstractDatabase extends Est_Handler_AbstractDatabase
 {
-    /**@+
+    /**
      * Actions to apply on row
      *
      * @var string
@@ -16,7 +17,6 @@ abstract class Est_Handler_Magento_AbstractDatabase extends Est_Handler_Abstract
     const ACTION_INSERT = 1;
     const ACTION_UPDATE = 2;
     const ACTION_DELETE = 3;
-    /**@-*/
 
     /**
      * Table prefix
@@ -216,6 +216,22 @@ abstract class Est_Handler_Magento_AbstractDatabase extends Est_Handler_Abstract
     }
 
     /**
+     * Get all rows
+     *
+     * @param string $query
+     * @param array $sqlParameters
+     * @return mixed
+     */
+    protected function _getAllRows($query, array $sqlParameters)
+    {
+        $statement = $this->getDbConnection()->prepare($query);
+        $statement->execute($sqlParameters);
+        $statement->setFetchMode(PDO::FETCH_ASSOC);
+
+        return $statement->fetchAll();
+    }
+
+    /**
      * Process delete query
      *
      * @param string $query
@@ -268,20 +284,24 @@ abstract class Est_Handler_Magento_AbstractDatabase extends Est_Handler_Abstract
      * @param string $oldValue
      * @throws Exception
      */
-    protected function _processUpdate($query, array $sqlParameters, $oldValue)
+    protected function _processUpdate($query, array $sqlParameters, $oldValue=null, $addMessage=true)
     {
-        $result = $this->getDbConnection()
-            ->prepare($query)
-            ->execute($sqlParameters);
+        $pdoStatement = $this->getDbConnection()->prepare($query);
+        $result       = $pdoStatement->execute($sqlParameters);
 
         if ($result === false) {
             // TODO: include speaking error message
             throw new Exception('Error while updating value');
         }
 
-        $this->addMessage(new Est_Message(sprintf('Updated value from "%s" to "%s"',
-            $oldValue,
-            $this->value))
-        );
+        $rowCount = $pdoStatement->rowCount();
+
+        if ($addMessage) {
+            if (!is_null($oldValue)) {
+                $this->addMessage(new Est_Message(sprintf('Updated value from "%s" to "%s" (%s row(s) affected)', $oldValue, $this->value, $rowCount)));
+            } else {
+                $this->addMessage(new Est_Message(sprintf('Updated value to "%s" (%s row(s) affected)', $this->value, $rowCount)));
+            }
+        }
     }
 }

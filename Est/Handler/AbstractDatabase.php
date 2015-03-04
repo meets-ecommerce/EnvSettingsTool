@@ -52,6 +52,11 @@ abstract class Est_Handler_AbstractDatabase extends Est_Handler_Abstract {
         return $this->dbConnection;
     }
 
+    /**
+     * Close database connection
+     *
+     * @return void
+     */
     protected function destroyDb(){
         unset($this->dbConnection);
     }
