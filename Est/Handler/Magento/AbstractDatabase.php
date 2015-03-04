@@ -123,7 +123,7 @@ abstract class Est_Handler_Magento_AbstractDatabase extends Est_Handler_Abstract
         $query->execute(array(':code' => $code));
         $query->setFetchMode(PDO::FETCH_ASSOC);
         $results = $query->fetch();
-        if (count($results) == 0) {
+        if ($results === false || count($results) == 0) {
             throw new Exception("Could not find a website for code '$code'");
         } elseif (count($results) > 1) {
             throw new Exception("Found more than once website for code '$code'");
