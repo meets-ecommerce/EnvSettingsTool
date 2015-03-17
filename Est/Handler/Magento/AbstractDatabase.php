@@ -92,17 +92,17 @@ abstract class Est_Handler_Magento_AbstractDatabase extends Est_Handler_Abstract
      */
     protected function _getStoreIdFromCode($code)
     {
-        $query = $this->getDbConnection()
-                      ->prepare('SELECT `store_id` FROM `' . $this->_tablePrefix
-                                . 'core_store` WHERE `code` LIKE :code');
-        $query->execute(array(':code' => $code));
-        $query->setFetchMode(PDO::FETCH_ASSOC);
-        $results = $query->fetch();
-        if (count($results) == 0) {
+        $results = $this->_getAllRows(
+            "SELECT `store_id` FROM `{$this->_tablePrefix}core_store` WHERE `code` LIKE :code",
+            array(':code' => $code)
+        );
+
+        if (count($results) === 0) {
             throw new Exception("Could not find a store for code '$code'");
         } elseif (count($results) > 1) {
             throw new Exception("Found more than once store for code '$code'");
         }
+
         $result = end($results);
 
         return $result['store_id'];
@@ -117,19 +117,17 @@ abstract class Est_Handler_Magento_AbstractDatabase extends Est_Handler_Abstract
      */
     protected function _getWebsiteIdFromCode($code)
     {
-        $query = $this->getDbConnection()
-                      ->prepare('SELECT `website_id` FROM `' . $this->_tablePrefix
-                                . 'core_website` WHERE `code` LIKE :code');
-        $query->execute(array(':code' => $code));
-        $query->setFetchMode(PDO::FETCH_ASSOC);
-        $results = $query->fetch();
-        if ($results === false || count($results) == 0) {
+        $results = $this->_getAllRows(
+            "SELECT `website_id` FROM `{$this->_tablePrefix}core_website` WHERE `code` LIKE :code",
+            array(':code' => $code)
+        );
+        if (count($results) === 0) {
             throw new Exception("Could not find a website for code '$code'");
         } elseif (count($results) > 1) {
             throw new Exception("Found more than once website for code '$code'");
         }
         $result = end($results);
-        return $result;
+        return $result['website_id'];
     }
 
     /**
@@ -141,21 +139,19 @@ abstract class Est_Handler_Magento_AbstractDatabase extends Est_Handler_Abstract
      */
     protected function _getEntityTypeFromCode($code)
     {
-        $query = $this->getDbConnection()
-            ->prepare('SELECT `entity_type_id` FROM `' . $this->_tablePrefix . 'eav_entity_type` WHERE `entity_type_code` = :code');
-        $query->execute(array('code' => $code));
-        $query->setFetchMode(PDO::FETCH_ASSOC);
-
-        $result = $query->fetch();
-        if (!$result || 0 == count($result)) {
+        $results = $this->_getAllRows(
+            "SELECT `entity_type_id` FROM `{$this->_tablePrefix}eav_entity_type` WHERE `entity_type_code` LIKE :code",
+            array(':code' => $code)
+        );
+        if (count($results) === 0) {
             throw new Exception("Could not find an entity type with code '$code'");
-        } else if (1 < count($result)) {
+        } elseif (count($results) > 1) {
             throw new Exception("Found more than one entity type with code '$code'");
         }
 
-        $result = end($result);
+        $result = end($results);
 
-        return $result;
+        return $result['entity_type_id'];
     }
 
     /**
@@ -181,11 +177,7 @@ abstract class Est_Handler_Magento_AbstractDatabase extends Est_Handler_Abstract
      */
     protected function _outputQuery($query, array $sqlParameters)
     {
-        $statement = $this->getDbConnection()->prepare($query);
-        $statement->execute($sqlParameters);
-        $statement->setFetchMode(PDO::FETCH_ASSOC);
-
-        $rows = $statement->fetchAll();
+        $rows = $this->_getAllRows($query, $sqlParameters);
 
         $buffer = fopen('php://temp', 'r+');
         foreach ($rows as $row) {
