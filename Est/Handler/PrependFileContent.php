@@ -31,10 +31,10 @@ class Est_Handler_PrependFileContent extends Est_Handler_Abstract {
         }
 
         if (!is_writable($targetFile)) {
-            throw new Exception(sprintf('File "%s" does not exist', $targetFile));
+            throw new Exception(sprintf('File "%s" is not writeable', $targetFile));
         }
         if (!is_file($contentFile)) {
-            throw new Exception(sprintf('File "%s" is not writeable', $contentFile));
+            throw new Exception(sprintf('File "%s" does not exist', $contentFile));
         }
         if (!empty($this->param3)) {
             throw new Exception('Param3 is not used in this handler and must be empty');
