@@ -307,7 +307,7 @@ class Est_HandlerCollectionTestcase extends PHPUnit_Framework_TestCase {
      * @test
      * @dataProvider groupProvider
      */
-    public function includeSingleGroup($includeGroups, $excludeGroups, $expectedParams) {
+    public function groups($includeGroups, $excludeGroups, $expectedParams) {
 
         $includeGroups = $includeGroups ? explode(',', $includeGroups) : array();
         $excludeGroups = $excludeGroups ? explode(',', $excludeGroups) : array();
