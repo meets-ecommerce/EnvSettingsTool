@@ -19,11 +19,11 @@ class Est_HandlerCollection implements Iterator {
      * @param $csvFile
      * @param $environment
      * @param string $defaultEnvironment
-     * @param array $groups
+     * @param array $includeGroups
      * @param array $excludeGroups
      * @throws Exception
      */
-    public function buildFromSettingsCSVFile($csvFile, $environment, $defaultEnvironment='DEFAULT', array $groups=array(), array $excludeGroups=array()) {
+    public function buildFromSettingsCSVFile($csvFile, $environment, $defaultEnvironment='DEFAULT', array $includeGroups=array(), array $excludeGroups=array()) {
         if (!is_file($csvFile)) {
             throw new Exception('SettingsFile is not present here: "'.$csvFile.'"');
         }
@@ -39,13 +39,13 @@ class Est_HandlerCollection implements Iterator {
 
             $rowGroups = $this->getGroupsForRow($row);
 
-            if (count($groups) && count(array_intersect($rowGroups, $groups)) == 0) {
-                // current row's group do not match given groups
+            if (count($includeGroups) && count(array_intersect($rowGroups, $includeGroups)) == 0) {
+                // current row's groups do not match given include groups
                 continue;
             }
 
-            if (count($excludeGroups) && count(array_intersect($excludeGroups, $groups)) > 0) {
-                // current row's group do match given exclude groups
+            if (count($excludeGroups) && count(array_intersect($rowGroups, $excludeGroups)) > 0) {
+                // current row's groups do match given exclude groups
                 continue;
             }
 
