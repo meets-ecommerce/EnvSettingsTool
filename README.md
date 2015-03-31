@@ -1,6 +1,10 @@
 What is EnvSettingsTool?
 ========================
 
+[![Build Status](https://travis-ci.org/AOEpeople/EnvSettingsTool.svg?branch=master)](https://travis-ci.org/AOEpeople/EnvSettingsTool)
+
+Author: [Fabrizio Branca](https://twitter.com/fbrnc)
+
 EnvSettingsTool offers a concept to adjust settings for applications.
 Typically it is used during deployment.
 The settings for every Environment can be maintained in an CSV file.
