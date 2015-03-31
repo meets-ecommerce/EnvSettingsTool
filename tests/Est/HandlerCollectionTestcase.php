@@ -303,6 +303,55 @@ class Est_HandlerCollectionTestcase extends PHPUnit_Framework_TestCase {
         $this->assertEquals('inline-6-parameter', $handlers[5]->getValue());
     }
 
+    /**
+     * @test
+     * @dataProvider groupProvider
+     */
+    public function includeSingleGroup($includeGroups, $excludeGroups, $expectedParams) {
+
+        $includeGroups = $includeGroups ? explode(',', $includeGroups) : array();
+        $excludeGroups = $excludeGroups ? explode(',', $excludeGroups) : array();
+        $expectedParams = $expectedParams ? explode(',', $expectedParams) : array();
+
+        $handlerCollection = $this->getHandlerCollectionFromFixture('SettingsWithGroups.csv', 'testenv', $includeGroups, $excludeGroups);
+        $params = array();
+        foreach ($handlerCollection as $handler) { /* @var $handler Est_Handler_Abstract */
+            $params[] = $handler->getParam2();
+        }
+
+        $this->assertEquals($expectedParams, $params);
+    }
+
+    public function groupProvider() {
+        return array(
+
+            // none
+            array('', '', '/a,/b,/c,/a/b,/a/c,/b/c,/a/b/c,/nogroup'), // all rows!
+
+            // includes
+            array('groupA', '', '/a,/a/b,/a/c,/a/b/c'),
+            array('groupB', '', '/b,/a/b,/b/c,/a/b/c'),
+            array('groupC', '', '/c,/a/c,/b/c,/a/b/c'),
+            array('groupA,groupB', '', '/a,/b,/a/b,/a/c,/b/c,/a/b/c'), // multiple groups are combined with 'or' not 'and'!
+            array('groupB,groupC', '', '/b,/c,/a/b,/a/c,/b/c,/a/b/c'),
+            array('groupA,groupC', '', '/a,/c,/a/b,/a/c,/b/c,/a/b/c'),
+            array('groupA,groupB,groupC', '', '/a,/b,/c,/a/b,/a/c,/b/c,/a/b/c'),
+            array('groupC,groupB', '', '/b,/c,/a/b,/a/c,/b/c,/a/b/c'), // different order groups results in same order of handlers
+
+            // excludes
+            array('', 'groupA', '/b,/c,/b/c,/nogroup'),
+            array('', 'groupB', '/a,/c,/a/c,/nogroup'),
+            array('', 'groupC', '/a,/b,/a/b,/nogroup'),
+            array('', 'groupA,groupB', '/c,/nogroup'), // multiple groups are combined with 'and' not 'or'!
+            array('', 'groupA,groupB,groupC', '/nogroup'),
+
+            // combination
+            array('groupA', 'groupB', '/a,/a/c'),
+            array('groupA', 'groupB,groupC', '/a'),
+            array('groupA', 'groupA', ''),
+
+        );
+    }
 
     /**
      * Get handler collection from fixture
@@ -311,10 +360,10 @@ class Est_HandlerCollectionTestcase extends PHPUnit_Framework_TestCase {
      * @param string $environment
      * @return Est_HandlerCollection
      */
-    private function getHandlerCollectionFromFixture($file='Settings.csv', $environment='latest') {
+    private function getHandlerCollectionFromFixture($file='Settings.csv', $environment='latest', array $includeGroups=array(), array $excludeGroups=array()) {
         $path = dirname(__FILE__).'/../fixtures/'.$file;
         $handlerCollection = new Est_HandlerCollection();
-        $handlerCollection->buildFromSettingsCSVFile($path, $environment);
+        $handlerCollection->buildFromSettingsCSVFile($path, $environment, 'DEFAULT', $includeGroups, $excludeGroups);
         return $handlerCollection;
     }
 
