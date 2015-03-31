@@ -1,0 +1,12 @@
+language: php
+php:
+  - 5.3
+  - 5.4
+  - 5.5
+script:
+  - cd tests && phpunit
+notifications:
+  email:
+    recipients: [ fabrizio.branca@aoe.com ]
+    on_success: always
+    on_failure: always
