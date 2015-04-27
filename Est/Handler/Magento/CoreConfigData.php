@@ -130,14 +130,14 @@ class Est_Handler_Magento_CoreConfigData extends Est_Handler_Magento_AbstractDat
             $scopeId = 0;
         }
 
-        if ($scope == 'stores' && !is_numeric($scopeId)) {
+        if ($scope == 'stores' && !is_numeric($scopeId) && $scopeId !== '%') {
             // do a store code lookup
             $code    = $scopeId;
             $scopeId = $this->_getStoreIdFromCode($code);
             $this->addMessage(new Est_Message("Found store id '$scopeId' for code '$code'", Est_Message::INFO));
         }
 
-        if ($scope == 'websites' && !is_numeric($scopeId)) {
+        if ($scope == 'websites' && !is_numeric($scopeId) && $scopeId !== '%') {
             // do a website code lookup
             $code    = $scopeId;
             $scopeId = $this->_getWebsiteIdFromCode($code);
