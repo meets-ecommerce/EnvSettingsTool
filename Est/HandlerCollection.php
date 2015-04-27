@@ -169,8 +169,9 @@ class Est_HandlerCollection implements Iterator {
     private function getValueFromRow(array $row, $environment, $fallbackEnvironment, Est_Handler_Abstract $handler=null) {
         $value              = null;
         $defaultColumnIndex = $this->getColumnIndexForEnvironment($fallbackEnvironment, true);
-        if (isset($row[$this->getColumnIndexForEnvironment($environment)])) {
-            $value = $row[$this->getColumnIndexForEnvironment($environment)];
+        $envColumnIndex = $this->getColumnIndexForEnvironment($environment);
+        if (array_key_exists($envColumnIndex, $row)) {
+            $value = $row[$envColumnIndex];
             if ($value == '--empty--') {
                 $value = '';
             } elseif (preg_match('/###REF:([^#]*)###/', $value, $matches)) {
@@ -181,7 +182,7 @@ class Est_HandlerCollection implements Iterator {
                 }
             }
         } else {
-            if ($defaultColumnIndex !== FALSE) {
+            if ($defaultColumnIndex !== FALSE && array_key_exists($defaultColumnIndex, $row)) {
                 $value = $row[$defaultColumnIndex];
             }
         }
