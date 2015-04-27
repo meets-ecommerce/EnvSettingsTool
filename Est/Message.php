@@ -2,9 +2,9 @@
 
 class Est_Message {
 
-    const OK = 0;
+    const ERROR = 0;
     const WARNING = 1;
-    const ERROR = 2;
+    const OK = 2;
     const SKIPPED = 3;
     const INFO = 4;
 
