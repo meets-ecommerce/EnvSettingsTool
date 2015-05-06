@@ -101,7 +101,7 @@ Example
     * Param2: not used
     * Param3: not used
 
-* **Est_Handler_CopyFile**: Allows you to set variables that can be used in all following handlers using `###VAR:<variableName>###`
+* **Est_Handler_CopyFile**: Allows you to copy a file from sourceFile path to targetFile path.
 
     * Param1: targetFile path
     * Param2: not used
