@@ -47,7 +47,7 @@ abstract class Est_Handler_AbstractDatabase extends Est_Handler_Abstract {
                 "mysql:host={$dbParameters['host']};dbname={$dbParameters['database']};charset=utf8",
                 $dbParameters['username'],
                 $dbParameters['password'],
-		array(PDO::MYSQL_ATTR_INIT_COMMAND => "SET NAMES 'utf8'")
+                array(PDO::MYSQL_ATTR_INIT_COMMAND => "SET NAMES 'utf8'")
             );
         }
         return $this->dbConnection;
