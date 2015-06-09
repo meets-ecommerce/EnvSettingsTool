@@ -88,7 +88,14 @@ Example
     * Param2: Marker that will be replaced
     * Param3: not used
 
-* **Est_Handler_PrependFileContent**: Prepends the content from one file to the content of another file
+* **Est_Handler_AddFileContent**: Adds the content from one file to the content of another file
+
+    * Param1: targetFile path
+    * Param2: 'before', 'after', 'prepend', or 'append'
+    * Param3: not used
+    * Value: contentFile path
+
+* **Est_Handler_PrependFileContent**: Prepends the content from one file to the content of another file (This is just a shortcut for the AddFileContent handler)
 
     * Param1: targetFile path
     * Param2: not used
