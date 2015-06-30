@@ -128,6 +128,13 @@ Example
     * Param3: Rolename
     * Value: 1=enabled, 0=disabled
     
+* **Est_Handler_Magento_StoreActivate**: Enables/disables an existing store
+
+    * Param1: store id or code 
+    * Param2: not used
+    * Param3: not used
+    * Value: 0 for disable, 1 for enable
+    
 
 ## Special Features
 
