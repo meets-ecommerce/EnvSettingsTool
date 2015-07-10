@@ -134,7 +134,21 @@ Example
     * Param2: not used
     * Param3: not used
     * Value: 0 for disable, 1 for enable
-    
+
+* **Est_Handler_Magento_Api2AclRule**: Configures Mage_Api2 rules
+
+    * Param1: role_id or role name
+    * Param2: resource_id
+    * Param3: privilege
+    * Value: 0/--delete-- for delete, 1/--insert-- for insert
+
+* **Est_Handler_Magento_Api2AclAttribute**: Configures Mage_Api2 attributes
+
+    * Param1: user_type (admin, customer or guest - lowercase!)
+    * Param2: resource_id
+    * Param3: operation
+    * Value: allowed_attributes
+
 
 ## Special Features
 
