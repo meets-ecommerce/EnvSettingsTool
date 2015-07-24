@@ -224,15 +224,21 @@ class Est_HandlerCollection implements Iterator {
      */
     protected function replaceWithEnvironmentVariables($string) {
         $matches = array();
-        preg_match_all('/###ENV:([^#]*)###/', $string, $matches, PREG_PATTERN_ORDER);
+        preg_match_all('/###ENV:([^#:]+)(:([^#]+))?###/', $string, $matches, PREG_PATTERN_ORDER);
         if (!is_array($matches) || !is_array($matches[0])) {
             return $string;
         }
         foreach ($matches[0] as $index => $completeMatch) {
-            if (getenv($matches[1][$index]) === false) {
-                throw new \Exception('Expected an environment variable ' . $matches[1][$index] . ' is not set');
+            $value = getenv($matches[1][$index]);
+            if ($value === false) {
+                // fallback if set
+                if (isset($matches[3][$index])) {
+                    $value = $matches[3][$index];
+                } else {
+                    throw new \Exception('Expected an environment variable ' . $matches[1][$index] . ' is not set');
+                }
             }
-            $string = str_replace($completeMatch, getenv($matches[1][$index]), $string);
+            $string = str_replace($completeMatch, $value, $string);
         }
 
         return $string;
