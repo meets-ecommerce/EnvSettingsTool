@@ -63,12 +63,21 @@ abstract class Est_Handler_Abstract implements Est_Handler_Interface {
             }
             return $result;
         } catch (Exception $e) {
-            $this->setStatus(Est_Handler_Interface::STATUS_ERROR);
-            $this->addMessage(new Est_Message(
-                $e->getMessage(),
-                Est_Message::ERROR
-            ));
-            return $this->ignoreErrors ? null : false;
+            if ($this->ignoreErrors) {
+                $this->setStatus(Est_Handler_Interface::STATUS_IGNORED_ERROR);
+                $this->addMessage(new Est_Message(
+                    '[IGNORED] ' . $e->getMessage(),
+                    Est_Message::ERROR
+                ));
+                return true;
+            } else {
+                $this->setStatus(Est_Handler_Interface::STATUS_ERROR);
+                $this->addMessage(new Est_Message(
+                    ($this->ignoreErrors ? '[IGNORED] ' : '') . $e->getMessage(),
+                    Est_Message::ERROR
+                ));
+                return false;
+            }
         }
     }
 
