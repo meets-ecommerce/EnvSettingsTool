@@ -57,6 +57,12 @@ class Est_HandlerCollection implements Iterator {
                 continue;
             }
 
+            $ignoreErrors = false;
+            if ($handlerClassname[0] == '@') {
+                $ignoreErrors = true;
+                $handlerClassname = trim(substr($handlerClassname, 1));
+            }
+
             if (!class_exists($handlerClassname)) {
                 throw new Exception(sprintf('Could not find handler class "%s"', $handlerClassname));
             }
@@ -95,6 +101,8 @@ class Est_HandlerCollection implements Iterator {
                         $handler->setParam1($param1);
                         $handler->setParam2($param2);
                         $handler->setParam3($param3);
+
+                        $handler->setIgnoreErrors($ignoreErrors);
 
                         $value = $this->getValueFromRow(
                             $row,

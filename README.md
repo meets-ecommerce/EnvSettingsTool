@@ -237,6 +237,9 @@ You can reference to values from another environment by adding this to the value
 * `###PARAM2###` will be replaced with the given param2. Also works if the parameter is given in the loop syntax `{{..|..}}`. Then the individual value will be set.
 * `###PARAM3###` will be replaced with the given param3. Also works if the parameter is given in the loop syntax `{{..|..}}`. Then the individual value will be set.
 
+## Ignore errors
+
+If a handler name if prefixed with `@` then this error will be ignored and the apply command continues walking through the list.
 
 ## Groups
 

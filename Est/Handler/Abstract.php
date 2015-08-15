@@ -25,6 +25,11 @@ abstract class Est_Handler_Abstract implements Est_Handler_Interface {
      */
     protected $configKey;
 
+    /**
+     * @var bool $ignore errors
+     */
+    protected $ignoreErrors = false;
+
 
 
     protected $status = Est_Handler_Interface::STATUS_NOTEXECUTED;
@@ -63,7 +68,7 @@ abstract class Est_Handler_Abstract implements Est_Handler_Interface {
                 $e->getMessage(),
                 Est_Message::ERROR
             ));
-            return false;
+            return $this->ignoreErrors ? null : false;
         }
     }
 
@@ -192,6 +197,18 @@ abstract class Est_Handler_Abstract implements Est_Handler_Interface {
         return $this->status;
     }
 
+    /**
+     * @return boolean
+     */
+    public function getIgnoreErrors() {
+        return $this->ignoreErrors;
+    }
 
+    /**
+     * @param boolean $ignoreErrors
+     */
+    public function setIgnoreErrors($ignoreErrors) {
+        $this->ignoreErrors = $ignoreErrors;
+    }
 
 }
