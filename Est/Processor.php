@@ -73,6 +73,7 @@ class Est_Processor {
                 throw new Exception('Error in handler: ' . $handler->getLabel());
             }
         }
+        Est_DbConnection::commitAllTransactions();
         return true;
     }
 
