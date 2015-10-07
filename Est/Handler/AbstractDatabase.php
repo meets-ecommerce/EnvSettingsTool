@@ -43,12 +43,8 @@ abstract class Est_Handler_AbstractDatabase extends Est_Handler_Abstract {
                     throw new Exception(sprintf('No "%s" found in database connection parameters', $key));
                 }
             }
-            $this->dbConnection = new PDO(
-                "mysql:host={$dbParameters['host']};dbname={$dbParameters['database']};charset=utf8",
-                $dbParameters['username'],
-                $dbParameters['password'],
-                array(PDO::MYSQL_ATTR_INIT_COMMAND => "SET NAMES 'utf8'")
-            );
+            $this->dbConnection = Est_DbConnection::getConnection($dbParameters);
+
         }
         return $this->dbConnection;
     }
