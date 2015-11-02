@@ -44,7 +44,7 @@ class Est_Processor {
             throw new InvalidArgumentException('No settings file set.');
         }
         if (!file_exists($settingsFilePath)) {
-            throw new InvalidArgumentException('Could not read settings file.');
+            throw new InvalidArgumentException('Could not read settings file. Working dir: ' . getcwd() . ' file path: ' . $settingsFilePath);
         }
 
         $this->environment = $environment;
