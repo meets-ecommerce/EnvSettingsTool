@@ -149,6 +149,14 @@ Example
     * Param3: operation
     * Value: allowed_attributes
 
+* **Est_Handler_Akeneo_BatchJobInstanceData**: Changes values of akeneo_batch_job_instance table in a Akeneo instance. It reads its database parameters from app/config/parameters.yml - therefore it needs to be placed after any adjustments of DB credentials.
+
+    * Param1: jobcode ('csv_products_export', 'magento_attributes_export', etc.)
+    * Param2: key (key of the serialized configuration value to replace)
+    * Param3: not used
+
+    * Special features:
+        * If the value field of a row for the current environment is `--delete--` the matched export job will be deleted
 
 ## Special Features
 
