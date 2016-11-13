@@ -158,7 +158,7 @@ Example
     * Special features:
         * If the value field of a row for the current environment is `--delete--` the matched export job will be deleted
 
-* **Est_Handler_Magento_ApiUser **: Can create, update and delete API users.
+* **Est_Handler_Magento_ApiUser**: Can create, update and delete API users.
     
     * Create User 
         * Param1: username  
