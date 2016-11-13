@@ -1,7 +1,15 @@
 <?php
+/**
+ * aoepeople/envsettingstool
+ *
+ * Extended by meets-ecommerce.de
+ *
+ * @copyright   Copyright (c) 2016 meets-ecommerce UG (haftungsbeschränkt) (http://meets-ecommerce.de)
+ * @author      Daniel Matuschewsky <dm@meets-ecommerce.de>
+ */
 
 /**
- * @author Daniel Matuschewsky <dm@meets-ecommerce.de>
+ * Class Est_Handler_Magento_ApiUser
  */
 class Est_Handler_Magento_ApiUser extends Est_Handler_Magento_AbstractDatabase
 {
@@ -67,7 +75,7 @@ class Est_Handler_Magento_ApiUser extends Est_Handler_Magento_AbstractDatabase
         if ($apiUser !== false) {
             $this->log(sprintf("API User %s exists already.", $userName),
                 Est_Message::SKIPPED);
-            return false;
+            return true;
         }
 
         $queryParams = array(
@@ -143,7 +151,7 @@ class Est_Handler_Magento_ApiUser extends Est_Handler_Magento_AbstractDatabase
         if ($apiUser === false) {
             $this->log(sprintf("API User already deleted.",
                 Est_Message::SKIPPED));
-            return false;
+            return true;
         }
 
         $queryParams = array(':user_id' => $apiUser['user_id']);
