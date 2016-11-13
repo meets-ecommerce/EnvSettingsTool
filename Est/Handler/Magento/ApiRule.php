@@ -11,7 +11,7 @@
 /**
  * Class Est_Handler_Magento_ApiRule
  */
-class Est_Handler_Magento_ApiRule extends Est_Handler_Magento_AbstractDatabase
+class Est_Handler_Magento_ApiRule extends Est_Handler_Magento_AbstractApi
 {
 
     /**
@@ -29,9 +29,9 @@ class Est_Handler_Magento_ApiRule extends Est_Handler_Magento_AbstractDatabase
                 break;
             case Est_Handler_Magento_AbstractDatabase::ACTION_INSERT:
                 /**
-                 * param1 ==
-                 * param2 ==
-                 * param3 ==
+                 * param1 == role_id or role_name
+                 * param2 == resource_id // many: can be comma separated
+                 * param3 == allow|deny
                  */
                 return $this->insert();
                 break;
@@ -45,9 +45,8 @@ class Est_Handler_Magento_ApiRule extends Est_Handler_Magento_AbstractDatabase
                 break;
             case Est_Handler_Magento_AbstractDatabase::ACTION_DELETE:
                 /**
-                 * param1 ==
-                 * param2 ==
-                 * param3 ==
+                 * param1 == role_id or role_name
+                 * param2 == resource_id // many: can be comma separated OR * for all
                  */
                 return $this->delete();
                 break;
@@ -55,49 +54,147 @@ class Est_Handler_Magento_ApiRule extends Est_Handler_Magento_AbstractDatabase
         return true;
     }
 
+    /**
+     * Inserts one or many rule entries
+     *
+     * @return bool
+     */
     private function insert()
     {
-
         $this->_checkIfTableExists('api_user');
         $this->setValue("INSERT");
+
+        if (!in_array($this->getParam3(), array('deny', 'allow'))) {
+            $this->log(sprintf("Could not add permissions with type %s. Error.",
+                $this->getParam3()),
+                Est_Message::ERROR);
+            return false;
+        }
+
+        $role = $this->getApiRole($this->getParam1());
+        if ($role === false) {
+            $this->log(sprintf("Could not load API role %s. Error.",
+                $this->getParam1()),
+                Est_Message::ERROR);
+            return false;
+        }
+
+        $resourceIds = explode(",", $this->getParam2());
+        if (count($resourceIds) > 0) {
+            $queryParams = array(
+                ':role_id'        => $role['role_id'],
+                ':api_permission' => $this->getParam3()
+            );
+            $query
+                = "INSERT INTO api_rule (role_id, resource_id, api_privileges, assert_id, role_type, api_permission) VALUES (:role_id, :resource_id, NULL, 0, 'G', :api_permission);";
+            foreach ($resourceIds as $resourceId) {
+                $resourceId = trim($resourceId);
+                if ($this->isRule($role['role_id'], $resourceId) == false) {
+                    $queryParams[':resource_id'] = $resourceId;
+                    var_dump($queryParams);
+                    $result = $this->getDbConnection()->prepare($query)
+                        ->execute($queryParams);
+
+                    if ($result === false) {
+                        $this->log(sprintf("Could not add resource %s to API role %s. Error.",
+                            $resourceId, $role['role_name']),
+                            Est_Message::ERROR);
+                        return false;
+                    }
+                }
+            }
+            $this->log(sprintf("Added following resource(s) %s to API role %s.",
+                implode(",", $resourceIds), $role['role_name']),
+                Est_Message::OK);
+        } else {
+            $this->log(sprintf("No resources to add to API role %s.",
+                $role['role_name']), Est_Message::OK);
+        }
         return true;
     }
 
+    /**
+     * Updates one or many rule entries
+     *
+     * @return bool
+     */
     private function update()
     {
-        $this->_checkIfTableExists('api_user');
+        $this->_checkIfTableExists('api_rule');
         $this->setValue("UPDATE");
-
+        $this->log("Update feature not implemented yet. Skipping.",
+            Est_Message::SKIPPED);
         return true;
     }
 
-    private function deleteUser($userId)
+    /**
+     * Deletes one or many rule entries
+     *
+     * @return bool
+     */
+    private function delete()
     {
-        $this->_checkIfTableExists('api_user');
+        $this->_checkIfTableExists('api_rule');
         $this->setValue("DELETE");
+
+        $role = $this->getApiRole($this->getParam1());
+        if ($role === false) {
+            $this->log(sprintf("Could not load API role %s. Error.",
+                $this->getParam1()),
+                Est_Message::ERROR);
+            return false;
+        }
+
+        $resourceIds = explode(",", $this->getParam2());
+        if (count($resourceIds) > 0) {
+            $queryParams = array(
+                ':role_id' => $role['role_id'],
+            );
+            $query
+                = "DELETE FROM api_rule WHERE role_id = :role_id";
+
+            foreach ($resourceIds as $resourceId) {
+                if ($resourceId == '*') {
+                    $this->getDbConnection()->prepare($query)
+                        ->execute($queryParams);
+                    $this->log(sprintf("Removed all resources from API role %s.",
+                        $role['role_name']),
+                        Est_Message::OK);
+                    return true;
+                }
+
+                $queryParams[':resource_id'] = trim($resourceId);
+                $query .= ' AND resource_id = :resource_id';
+                $this->getDbConnection()->prepare($query)
+                    ->execute($queryParams);
+
+            }
+            $this->log(sprintf("Removed following resource(s) %s from API role %s.",
+                implode(",", $resourceIds), $role['role_name']),
+                Est_Message::OK);
+        } else {
+            $this->log(sprintf("No resources to add to API role %s.",
+                $role['role_name']), Est_Message::OK);
+        }
         return true;
     }
 
 
     /**
-     * Returns an API user by given id oder username
+     * Returns if rule already there
      *
-     * @param string $value
+     * @param int    $roleId
+     * @param string $resourceId
      *
-     * @return bool|array
+     * @return bool
      */
-    private function getApiUser($value)
+    private function isRule($roleId, $resourceId)
     {
-        $basicQuery = 'SELECT * FROM api_user WHERE ';
-        $queryParams = array(':value' => $value);
-        $apiUser = $this->_getFirstRow($basicQuery . '`user_id` = :value',
-            $queryParams
-        );
-        if ($apiUser === false) {
-            $apiUser = $this->_getFirstRow($basicQuery . '`username` = :value',
-                $queryParams);
-        }
-        return $apiUser;
+        return $this->_getFirstRow("SELECT * FROM api_rule WHERE role_id = :role_id AND resource_id = :resource_id;",
+            array(
+                ":role_id"     => $roleId,
+                ":resource_id" => $resourceId
+            )) == false ? false : true;
     }
 
     /**

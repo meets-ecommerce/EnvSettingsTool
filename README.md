@@ -148,14 +148,37 @@ Example
         * Param1: username  
         * Param2: email
         * Param3: password
+        * Environment: --insert--
 
     * Update user
         * Param1: user_id or username
         * Param2: field (field to update)
         * Param3: value (if field == api_key the value gets md5 hashed)
+        * Environment: --update--
     
     * Delete user
         * Param1: user_id or username
+        * Environment: --delete--
+
+* **Est_Handler_Magento_ApiRole**: Can create, update and delete API roles / users.
+    
+    * Add role
+        * Param1: role_name or role_id
+        * Environment: --insert--
+        
+    * Add user to role
+        * Param1: role_name or role_id
+        * Param2: username or user_id
+        * Environment: --insert--
+
+    * Remove role
+        * Param1: role_name or role_id
+        * Environment: --delete--
+        
+    * Remove user from role
+        * Param1: role_name or role_id
+        * Param2: username or user_id
+        * Environment: --delete--
 
 ## Special Features
 

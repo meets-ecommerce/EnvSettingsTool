@@ -11,7 +11,7 @@
 /**
  * Class Est_Handler_Magento_ApiUser
  */
-class Est_Handler_Magento_ApiUser extends Est_Handler_Magento_AbstractDatabase
+class Est_Handler_Magento_ApiUser extends Est_Handler_Magento_AbstractApi
 {
 
 
@@ -69,7 +69,7 @@ class Est_Handler_Magento_ApiUser extends Est_Handler_Magento_AbstractDatabase
     {
 
         $this->_checkIfTableExists('api_user');
-        $this->setValue("CREATE");
+        $this->setValue("INSERT");
         $apiUser = $this->getApiUser($userName);
 
         if ($apiUser !== false) {
@@ -96,6 +96,8 @@ class Est_Handler_Magento_ApiUser extends Est_Handler_Magento_AbstractDatabase
                 Est_Message::ERROR);
             return false;
         }
+
+        $this->log(sprintf("Created API User %s.", $userName), Est_Message::OK);
         return true;
     }
 
@@ -133,6 +135,8 @@ class Est_Handler_Magento_ApiUser extends Est_Handler_Magento_AbstractDatabase
             $this->log("Could not updated user.", Est_Message::ERROR);
             return false;
         }
+
+        $this->log(sprintf("Updated API User %s.", $userNameOrId), Est_Message::OK);
         return true;
     }
 
@@ -165,30 +169,17 @@ class Est_Handler_Magento_ApiUser extends Est_Handler_Magento_AbstractDatabase
             return false;
         }
 
+        // delete also connections to roles
+        $isConnected
+            = $this->_getFirstRow("SELECT * FROM api_role WHERE user_id = :user_id",
+            array(":user_id" => $apiUser['user_id']));
+        if ($isConnected !== false) {
+            $this->getDbConnection()->prepare("DELETE FROM api_role WHERE user_id = :user_id")
+                ->execute(array(":user_id" => $apiUser['user_id']));
+        }
+
         $this->log(sprintf("Deleted API User with id %s.", $userId));
         return true;
-    }
-
-
-    /**
-     * Returns an API user by given id oder username
-     *
-     * @param string $value
-     *
-     * @return bool|array
-     */
-    private function getApiUser($value)
-    {
-        $basicQuery = 'SELECT * FROM api_user WHERE ';
-        $queryParams = array(':value' => $value);
-        $apiUser = $this->_getFirstRow($basicQuery . '`user_id` = :value',
-            $queryParams
-        );
-        if ($apiUser === false) {
-            $apiUser = $this->_getFirstRow($basicQuery . '`username` = :value',
-                $queryParams);
-        }
-        return $apiUser;
     }
 
     /**
