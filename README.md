@@ -179,6 +179,19 @@ Example
         * Param1: role_name or role_id
         * Param2: username or user_id
         * Environment: --delete--
+        
+* **Est_Handler_Magento_ApiRule**: Can add or remove resources to an API role
+    
+    * Add resource to an API role
+        * Param1: role_name or role_id
+        * Param2: resource_id // many: comma separated
+        * Param3: allow|deny
+        * Environment: --insert--
+
+    * Remove resource to an API role
+        * Param1: role_name or role_id
+        * Param2: resource_id // many: comma separated OR * for all resoruces
+        * Environment: --insert--
 
 ## Special Features
 
