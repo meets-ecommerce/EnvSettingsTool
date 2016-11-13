@@ -15,9 +15,7 @@ class Est_Handler_Magento_ApiUser extends Est_Handler_Magento_AbstractDatabase
      */
     protected function _apply()
     {
-
         $action = $this->detectDatabaseAction($this->value);
-
         switch ($action) {
             case Est_Handler_Magento_AbstractDatabase::ACTION_NO_ACTION:
                 return true;
