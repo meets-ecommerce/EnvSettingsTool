@@ -142,22 +142,6 @@ Example
     * Param3: privilege
     * Value: 0/--delete-- for delete, 1/--insert-- for insert
 
-* **Est_Handler_Magento_Api2AclAttribute**: Configures Mage_Api2 attributes
-
-    * Param1: user_type (admin, customer or guest - lowercase!)
-    * Param2: resource_id
-    * Param3: operation
-    * Value: allowed_attributes
-
-* **Est_Handler_Akeneo_BatchJobInstanceData**: Changes values of akeneo_batch_job_instance table in a Akeneo instance. It reads its database parameters from app/config/parameters.yml - therefore it needs to be placed after any adjustments of DB credentials.
-
-    * Param1: jobcode ('csv_products_export', 'magento_attributes_export', etc.)
-    * Param2: key (key of the serialized configuration value to replace)
-    * Param3: not used
-
-    * Special features:
-        * If the value field of a row for the current environment is `--delete--` the matched export job will be deleted
-
 * **Est_Handler_Magento_ApiUser**: Can create, update and delete API users.
     
     * Create User 
