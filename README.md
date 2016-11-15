@@ -164,21 +164,21 @@ Example
     
     * Add role
         * Param1: role_name or role_id
-        * Environment: --insert--
+        * Value: --insert--
         
     * Add user to role
         * Param1: role_name or role_id
         * Param2: username or user_id
-        * Environment: --insert--
+        * Value: --insert--
 
     * Remove role
         * Param1: role_name or role_id
-        * Environment: --delete--
+        * Value: --delete--
         
     * Remove user from role
         * Param1: role_name or role_id
         * Param2: username or user_id
-        * Environment: --delete--
+        * Value: --delete--
         
 * **Est_Handler_Magento_ApiRule**: Can add or remove resources to an API role
     
@@ -186,12 +186,25 @@ Example
         * Param1: role_name or role_id
         * Param2: resource_id // many: comma separated
         * Param3: allow|deny
-        * Environment: --insert--
+        * Value: --insert--
 
     * Remove resource to an API role
         * Param1: role_name or role_id
         * Param2: resource_id // many: comma separated OR * for all resoruces
-        * Environment: --insert--
+        * Value: --insert--
+        
+* **Est_Handler_Magento_DatabaseTableTruncate**: Truncates tables
+    
+    * Param1: table         // can be table_* f.e. to find many tables
+    * Param2: no_fk_check   // turns of foreign key check; leave blank for having checks enabled
+    * Value: --truncate--   // must be set otherwise it skips the row
+
+* **Est_Handler_Magento_DatabaseTableDrop**: Drop tables
+    
+    * Param1: table         // can be table_* f.e. to find many tables
+    * Param2: no_fk_check   // turns of foreign key check; leave blank for having checks enabled
+    * Value: --drop--       // must be set otherwise it skips the row
+
 
 ## Special Features
 
