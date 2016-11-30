@@ -129,6 +129,13 @@ Example
     * Param2: store code or store id
     * Param3: increment prefix
 
+* **Est_Handler_Magento_EavEntityStoreExtended**: Sets a predefined increment prefix. The last increment id will be set to <store-id><prefix>00000000.
+
+    * Param1: entity type code or entity type id
+    * Param2: store code or store id
+    * Param3: increment prefix (can be string or integer; also possible to have place holder * which creates a random number between 0 and 9)
+
+
 * **Est_Handler_Magento_AdminUserActivate**: Allows to enabled/disabled admin user accounts based on username, email or roles (wildcards supported)
 
     * Param1: Username
