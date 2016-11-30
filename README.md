@@ -82,6 +82,14 @@ Example
         * If scope is `stores` the scope id can be a store code instead of a store id.
         * If scope is `website` the scope id can be a website code instead of a website id.
 
+
+* **Est_Handler_Magento_CoreCacheOption**: Changes values of core_config_data table in a Magento instance. It reads its database parameters from app/etc/local.xml - therefore it needs to be placed after any adjustments of DB credentials.
+
+    * Param1: cache type (block_html, collections, config, config_api, config_api2, eav, layout, translate)
+    * Param2: not used
+    * Param3: not used
+    * Value:  can be 1 for enabled; 0 for disabled
+
 * **Est_Handler_MarkerReplace**: Simply replaces a given marker in a file
 
     * Param1: Relative Path to File (relative to current directory)
