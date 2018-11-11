@@ -220,6 +220,13 @@ Example
     * Param2: no_fk_check   // turns of foreign key check; leave blank for having checks enabled
     * Value: --drop--       // must be set otherwise it skips the row
 
+* **Est_Handler_Magento_DesignChange**: Change a design
+    
+    * Param1: store_id      // The store id you want to add the design change f.e. 5
+    * Param2:               // Not in use
+    * Param3:               // Not in use
+    * Value:  design        // The design package  you want to use f.e. "rwd/rwd"; possible vales "--skip--"; "--delete--"
+
 
 ## Special Features
 
